@@ -15,7 +15,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **CORE-04**: Package must use `pydantic` for schema validation
 - [ ] **CORE-05**: Target Python 3.10+
 - [x] **CORE-06**: Configuration via environment variables for Diode gRPC connection (endpoint, client_id, client_secret)
-- [ ] **CORE-07**: Error reporting via exceptions (ValueError/TypeError) for validation failures
+- [x] **CORE-07**: Error reporting via exceptions (ValueError/TypeError) for validation failures
 - [x] **CORE-08**: Support for batch operations across multiple device dictionaries
 
 ### Device Structure
@@ -115,7 +115,7 @@ Explicitly excluded. Documented to prevent scope creep.
 | CORE-04 | Phase 1 | Pending |
 | CORE-05 | Phase 1 | Pending |
 | CORE-06 | Phase 4 | Complete |
-| CORE-07 | Phase 5 | Pending |
+| CORE-07 | Phase 5 | Complete |
 | CORE-08 | Phase 4 | Complete |
 | DEV-01 | Phase 1 | Pending |
 | DEV-02 | Phase 1 | Pending |
