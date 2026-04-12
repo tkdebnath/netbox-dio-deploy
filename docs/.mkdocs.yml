@@ -1,0 +1,87 @@
+# MkDocs configuration for NetBox Diode Device Wrapper
+# Documentation: https://www.mkdocs.org/
+
+site_name: NetBox Diode Device Wrapper
+site_description: A high-level Python wrapper for the NetBox Diode SDK
+site_url: https://netbox-dio.readthedocs.io/
+
+# Repository
+repo_name: netboxlabs/diode-sdk-python
+repo_url: https://github.com/netboxlabs/diode-sdk-python
+
+# Navigation
+nav:
+  - Home: index.md
+  - Getting Started: getting-started/index.md
+  - API Reference: api/index.md
+  - Migration Guide: migration/index.md
+  - CLI Reference: cli/index.md
+  - Architecture: architecture/index.md
+
+# Theme
+theme:
+  name: material
+  logo: assets/logo.png
+  favicon: assets/favicon.png
+  features:
+    - navigation.tabs
+    - navigation.tabs.snap
+    - navigation.sections
+    - toc.integrate
+    - content.code.copy
+  language: en
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/brightness-4
+        name: Switch to dark mode
+    - scheme: slate
+      toggle:
+        icon: material/brightness-7
+        name: Switch to light mode
+
+# Plugins
+plugins:
+  - search
+  - macros
+
+# Custom styles
+extra_css:
+  - stylesheets/extra.css
+
+# Markdown extensions
+markdown_extensions:
+  - admonition
+  - codehilite:
+      guess_lang: false
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex
+  - pymdownx.betterem
+  - pymdownx.caret
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.magiclink
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:mkdocs_material.extensions.magic.fence_magic_format
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+# Extra configuration
+extra:
+  version: "0.1.0"
+  generator: false
+  analytics:
+    provider: google
+    property: UA-XXXXXX
+
+# Documentation build configuration
+docs_dir: .
+site_dir: site
