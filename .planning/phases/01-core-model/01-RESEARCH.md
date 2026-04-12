@@ -224,17 +224,15 @@ def validate_status(cls, v):
 | A4 | from_dict() should use model_validate() internally | Code Examples | Low - Standard Pydantic v2 pattern |
 | A5 | business_unit should map to custom_fields in the Diode Device | Common Pitfalls | Medium - Need user confirmation that this is the desired mapping behavior |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Should status field be validated against allowed values?**
-   - What we know: Diode accepts status as string field
-   - What's unclear: Are there specific allowed values (active, offline, planned) or any string?
-   - Recommendation: Add validation with allowlist, document the valid values
+1. **Should status field be validated against allowed values?** — RESOLVED
+   - Status field should be validated against: "active", "offline", "planned"
+   - Implementation: Use Pydantic @field_validator to enforce this
 
-2. **What is the expected format for business_unit mapping?**
-   - What we know: business_unit is a custom requirement, not native to Diode
-   - What's unclear: Should business_unit be stored in custom_fields under a specific key (e.g., "Business Unit")?
-   - Recommendation: Map to custom_fields["Business Unit"] or similar; needs user confirmation
+2. **What is the expected format for business_unit mapping?** — RESOLVED
+   - business_unit should be stored in custom_fields under the key "Business Unit"
+   - The Pydantic model accepts business_unit as a field but maps it to custom_fields["Business Unit"] before converting to Diode Device protobuf
 
 ## Environment Availability
 
