@@ -8,8 +8,8 @@
 
 - [x] **Phase 1: Core Model** - Pydantic DiodeDevice with mandatory field validation and device attributes
 - [x] **Phase 2: Converter Layer** - Transform Pydantic models to Diode Entity protobuf messages
-- [ ] **Phase 3: Device Subcomponents** - Interfaces, VLANs, Modules, Cables, Prefixes, IP addresses
-- [ ] **Phase 4: I/O Layer** - DiodeClient wrapper for gRPC transmission with batch support
+- [x] **Phase 3: Device Subcomponents** - Interfaces, VLANs, Modules, Cables, Prefixes, IP addresses
+- [x] **Phase 4: I/O Layer** - DiodeClient wrapper for gRPC transmission with batch support
 - [ ] **Phase 5: Validation & Error Handling** - Comprehensive exception handling and edge case coverage
 
 ## Phase Details
@@ -59,7 +59,7 @@ Plans:
 **UI hint**: no
 
 Plans:
-- [ ] 03-01-PLAN.md — Create Pydantic models for interfaces, VLANs, modules, cables, prefixes, and IP addresses with converter functions
+- [x] 03-01-PLAN.md — Create Pydantic models for interfaces, VLANs, modules, cables, prefixes, and IP addresses with converter functions
 
 ### Phase 4: I/O Layer
 **Goal**: Implement DiodeClient wrapper for gRPC transmission with environment-based configuration and batch operations
@@ -71,8 +71,11 @@ Plans:
   3. User can batch multiple devices and have them automatically chunked (>1000 devices)
   4. Batch operations provide per-device error reporting
   5. User can send batched payloads to Diode via create_message_chunks()
-**Plans**: TBD
+**Plans**: 1 plan
 **UI hint**: no
+
+Plans:
+- [x] 04-01-PLAN.md — DiodeClient with environment config, batch processor, create_message_chunks()
 
 ### Phase 5: Validation & Error Handling
 **Goal**: Comprehensive exception-based error handling and edge case coverage
@@ -92,6 +95,6 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Core Model | 2/2 | Completed | 2026-04-12 |
 | 2. Converter Layer | 1/1 | Completed | 2026-04-12 |
-| 3. Device Subcomponents | 0/1 | Not started | - |
-| 4. I/O Layer | 0/3 | Not started | - |
+| 3. Device Subcomponents | 1/1 | Completed | 2026-04-12 |
+| 4. I/O Layer | 1/1 | Completed | 2026-04-12 |
 | 5. Validation & Error Handling | 0/2 | Not started | - |

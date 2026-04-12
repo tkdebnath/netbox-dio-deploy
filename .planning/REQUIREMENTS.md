@@ -111,47 +111,47 @@ Explicitly excluded. Documented to prevent scope creep.
 |-------------|-------|--------|
 | CORE-01 | Phase 1 | Pending |
 | CORE-02 | Phase 1 | Pending |
-| CORE-03 | Phase 1 | Pending |
+| CORE-03 | Phase 2 | Pending |
 | CORE-04 | Phase 1 | Pending |
 | CORE-05 | Phase 1 | Pending |
-| CORE-06 | Phase 3 | Pending |
+| CORE-06 | Phase 4 | Pending |
 | CORE-07 | Phase 5 | Pending |
-| CORE-08 | Phase 3 | Pending |
-| DEV-01 | Phase 2 | Pending |
-| DEV-02 | Phase 2 | Pending |
-| DEV-03 | Phase 2 | Pending |
-| DEV-04 | Phase 2 | Pending |
-| DEV-05 | Phase 2 | Pending |
-| DEV-06 | Phase 2 | Pending |
-| DEV-07 | Phase 2 | Pending |
-| DEV-08 | Phase 2 | Pending |
-| INTF-01 | Phase 4 | Pending |
-| INTF-02 | Phase 4 | Pending |
-| INTF-03 | Phase 4 | Pending |
-| INTF-04 | Phase 4 | Pending |
-| INTF-05 | Phase 4 | Pending |
-| INTF-06 | Phase 4 | Pending |
-| VLAN-01 | Phase 4 | Pending |
-| VLAN-02 | Phase 4 | Pending |
-| VLAN-03 | Phase 4 | Pending |
-| VLAN-04 | Phase 4 | Pending |
-| MOD-01 | Phase 4 | Pending |
-| MOD-02 | Phase 4 | Pending |
-| MOD-03 | Phase 4 | Pending |
-| MOD-04 | Phase 4 | Pending |
-| CABLE-01 | Phase 4 | Pending |
-| CABLE-02 | Phase 4 | Pending |
-| CABLE-03 | Phase 4 | Pending |
-| PREFIX-01 | Phase 4 | Pending |
-| PREFIX-02 | Phase 4 | Pending |
-| PREFIX-03 | Phase 4 | Pending |
-| IP-01 | Phase 4 | Pending |
-| IP-02 | Phase 4 | Pending |
-| IP-03 | Phase 4 | Pending |
-| BATCH-01 | Phase 3 | Pending |
-| BATCH-02 | Phase 3 | Pending |
-| BATCH-03 | Phase 3 | Pending |
-| BATCH-04 | Phase 3 | Pending |
+| CORE-08 | Phase 4 | Pending |
+| DEV-01 | Phase 1 | Pending |
+| DEV-02 | Phase 1 | Pending |
+| DEV-03 | Phase 1 | Pending |
+| DEV-04 | Phase 1 | Pending |
+| DEV-05 | Phase 1 | Pending |
+| DEV-06 | Phase 1 | Pending |
+| DEV-07 | Phase 1 | Pending |
+| DEV-08 | Phase 1 | Pending |
+| INTF-01 | Phase 3 | Pending |
+| INTF-02 | Phase 3 | Pending |
+| INTF-03 | Phase 3 | Pending |
+| INTF-04 | Phase 3 | Pending |
+| INTF-05 | Phase 3 | Pending |
+| INTF-06 | Phase 3 | Pending |
+| VLAN-01 | Phase 3 | Pending |
+| VLAN-02 | Phase 3 | Pending |
+| VLAN-03 | Phase 3 | Pending |
+| VLAN-04 | Phase 3 | Pending |
+| MOD-01 | Phase 3 | Pending |
+| MOD-02 | Phase 3 | Pending |
+| MOD-03 | Phase 3 | Pending |
+| MOD-04 | Phase 3 | Pending |
+| CABLE-01 | Phase 3 | Pending |
+| CABLE-02 | Phase 3 | Pending |
+| CABLE-03 | Phase 3 | Pending |
+| PREFIX-01 | Phase 3 | Pending |
+| PREFIX-02 | Phase 3 | Pending |
+| PREFIX-03 | Phase 3 | Pending |
+| IP-01 | Phase 3 | Pending |
+| IP-02 | Phase 3 | Pending |
+| IP-03 | Phase 3 | Pending |
+| BATCH-01 | Phase 4 | Pending |
+| BATCH-02 | Phase 4 | Pending |
+| BATCH-03 | Phase 4 | Pending |
+| BATCH-04 | Phase 4 | Pending |
 
 **Coverage:**
 - v1 requirements: 49 total
@@ -160,4 +160,4 @@ Explicitly excluded. Documented to prevent scope creep.
 
 ---
 *Requirements defined: 2026-04-12*
-*Last updated: 2026-04-12 after initial definition*
+*Last updated: 2026-04-12 after roadmap creation*
