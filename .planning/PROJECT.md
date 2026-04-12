@@ -10,7 +10,21 @@ Enable network automation engineers to define network devices as Python dictiona
 
 ## Current State
 
-**Shipped:** v1.0 MVP (2026-04-12)
+**Shipped:** v1.1 CLI, Racks & Power, Export/Import (2026-04-12)
+
+The package is fully functional with:
+- Pydantic `DiodeDevice` model with mandatory field validation
+- Converter module for Pydantic-to-Protobuf conversion
+- Complete subcomponent support (interfaces, VLANs, modules, cables, prefixes, IPs)
+- I/O layer with gRPC client and batch processing
+- Comprehensive exception hierarchy with 9 error types
+- CLI tool with import/export commands for JSON/YAML files
+- `DiodeRack`, `DiodePDU`, `DiodeCircuit`, `DiodePowerFeed` models
+- Export to JSON, YAML, and NetBox YAML formats
+- Import from NetBox API and existing files
+
+<details>
+<summary><strong>v1.0 MVP (shipped 2026-04-12)</strong></summary>
 
 The package is fully functional with:
 - Pydantic `DiodeDevice` model with mandatory field validation
@@ -19,13 +33,7 @@ The package is fully functional with:
 - I/O layer with gRPC client and batch processing
 - Comprehensive exception hierarchy with 9 error types
 
-**Next Milestone:** v1.1 (2026-04-12)
-
-New features for v1.1:
-- CLI tool for importing/exporting device data from JSON/YAML files
-- Models for racks, PDUs, power circuits, and power feeds
-- Export to JSON, YAML, and NetBox YAML format for easy data exchange
-- Import existing NetBox data via API for migration/backup workflows
+</details>
 
 ## Requirements
 
@@ -40,23 +48,20 @@ New features for v1.1:
 - ✓ **CABLE-01** to **CABLE-03**: Cable relationship mapping — v1.0
 - ✓ **PREFIX-01** to **PREFIX-03**: Prefix management with IPv4/IPv6 support — v1.0
 - ✓ **IP-01** to **IP-03**: IP interface management — v1.0
-
-### Active
-
-- [ ] **CLI-01**: Command-line interface for importing/exporting device data from JSON/YAML files
-- [ ] **CLI-02**: Support for dry-run mode with output to stdout or file
-- [ ] **CLI-03**: Batch processing with configurable chunk size via CLI
-- [ ] **RACK-01**: Rack model with position, type, and serial attributes
-- [ ] **RACK-02**: Rack unit (RU) allocation tracking
-- [ ] **POWER-01**: PDU model with outlet configuration
-- [ ] **POWER-02**: Power circuit model with voltage and amperage
-- [ ] **POWER-03**: Power feed model with phase and capacity
-- [ ] **EXPORT-01**: Export to JSON format with optional pretty-printing
-- [ ] **EXPORT-02**: Export to YAML format (NetBox-compatible)
-- [ ] **EXPORT-03**: Export to NetBox YAML format with device templates
-- [ ] **IMPORT-01**: Import from NetBox API with filter support
-- [ ] **IMPORT-02**: Import from existing JSON/YAML files
-- [ ] **IMPORT-03**: Import with validation against schema
+- ✓ **CLI-01**: Command-line interface for importing/exporting device data — v1.1
+- ✓ **CLI-02**: Dry-run mode with output to stdout or file — v1.1
+- ✓ **CLI-03**: Batch processing with configurable chunk size — v1.1
+- ✓ **RACK-01**: Rack model with position, type, and serial — v1.1
+- ✓ **RACK-02**: Rack unit (RU) allocation tracking — v1.1
+- ✓ **POWER-01**: PDU model with outlet configuration — v1.1
+- ✓ **POWER-02**: Power circuit model with voltage and amperage — v1.1
+- ✓ **POWER-03**: Power feed model with phase and capacity — v1.1
+- ✓ **EXPORT-01**: Export to JSON format with optional pretty-printing — v1.1
+- ✓ **EXPORT-02**: Export to YAML format (NetBox-compatible) — v1.1
+- ✓ **EXPORT-03**: Export to NetBox YAML format with device templates — v1.1
+- ✓ **IMPORT-01**: Import from NetBox API with filter support — v1.1
+- ✓ **IMPORT-02**: Import from existing JSON/YAML files — v1.1
+- ✓ **IMPORT-03**: Import with validation against schema — v1.1
 
 ### Out of Scope
 
@@ -96,4 +101,4 @@ The wrapper will be used in network automation scripts, CI/CD pipelines, and inf
 | Environment variable config | Standard for containerized/automated envs | Easy integration with CI/CD and Kubernetes |
 
 ---
-*Last updated: 2026-04-12 after v1.0 milestone*
+*Last updated: 2026-04-12 after v1.1 milestone*

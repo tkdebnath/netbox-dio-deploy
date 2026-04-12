@@ -1,5 +1,16 @@
 # Milestones
 
+## v1.1 CLI, Racks & Power, Export/Import (Shipped: 2026-04-12)
+
+**Phases completed:** 3 phases, 8 plans, 6 tasks
+
+**Key accomplishments:**
+
+- Pydantic models for racks, PDUs, power circuits, and power feeds with Diode SDK protobuf conversion
+- Phase:
+
+---
+
 ## v1.0 MVP (Shipped: 2026-04-12)
 
 **Phases completed:** 5 phases, 6 plans, 28 tasks
