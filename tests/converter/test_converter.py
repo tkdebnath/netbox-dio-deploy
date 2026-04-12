@@ -66,15 +66,23 @@ class TestConvertDevice:
         assert entities[0].device.name == device.name
 
 
-class TestStubFunctions:
-    """Tests for stub conversion functions (Phase 3)."""
+class TestInterfaceConversion:
+    """Tests for convert_interface function."""
 
-    def test_convert_interface_raises_not_implemented(self) -> None:
-        """Test that convert_interface raises NotImplementedError."""
-        with pytest.raises(NotImplementedError):
-            convert_interface(None)
+    def test_convert_interface(self) -> None:
+        """Test converting interface to Entity."""
+        from netbox_dio.models import DiodeInterface
+        interface = DiodeInterface(name="eth0", device="router-01", type="physical")
+        entity = convert_interface(interface)
+        assert entity is not None
+        assert entity.interface.name == "eth0"
+        assert entity.interface.type == "physical"
 
-    def test_convert_vlan_raises_not_implemented(self) -> None:
-        """Test that convert_vlan raises NotImplementedError."""
-        with pytest.raises(NotImplementedError):
-            convert_vlan(None)
+    def test_convert_vlan(self) -> None:
+        """Test converting VLAN to Entity."""
+        from netbox_dio.models import DiodeVLAN
+        vlan = DiodeVLAN(name="vlan100", vid=100, site="site-a")
+        entity = convert_vlan(vlan)
+        assert entity is not None
+        assert entity.vlan.name == "vlan100"
+        assert entity.vlan.vid == 100
