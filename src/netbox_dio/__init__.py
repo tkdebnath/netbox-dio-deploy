@@ -19,6 +19,17 @@ Usage:
     entity = convert_device(device)
 """
 
+from .exceptions import (
+    DiodeError,
+    DiodeValidationError,
+    DiodeConversionError,
+    DiodeClientError,
+    DiodeServerResponseError,
+    DiodeBatchError,
+    DiodeConnectionRefusedError,
+    DiodeTimeoutError,
+    DiodeAuthenticationError,
+)
 from .models import (
     DiodeDevice,
     DiodeInterface,
@@ -58,10 +69,21 @@ from .converter import (
     convert_device_with_subcomponents,
 )
 
-from .client import DiodeClient, ConnectionConfig, DiodeClientError
+from .client import DiodeClient, ConnectionConfig
 from .batch import BatchProcessor, BatchResult, DeviceError, create_message_chunks
 
 __all__ = [
+    # Exception hierarchy
+    "DiodeError",
+    "DiodeValidationError",
+    "DiodeConversionError",
+    "DiodeClientError",
+    "DiodeServerResponseError",
+    "DiodeBatchError",
+    "DiodeConnectionRefusedError",
+    "DiodeTimeoutError",
+    "DiodeAuthenticationError",
+    # Models
     "DiodeDevice",
     "DiodeInterface",
     "InterfaceType",
@@ -86,6 +108,7 @@ __all__ = [
     "DiodeIPAddress",
     "IPAddressStatus",
     "IPAddressRole",
+    # Converter
     "convert_device",
     "convert_device_to_entities",
     "convert_interface",
@@ -96,9 +119,10 @@ __all__ = [
     "convert_prefix",
     "convert_ip_address",
     "convert_device_with_subcomponents",
+    # I/O
     "DiodeClient",
     "ConnectionConfig",
-    "DiodeClientError",
+    # Batch
     "BatchProcessor",
     "BatchResult",
     "DeviceError",

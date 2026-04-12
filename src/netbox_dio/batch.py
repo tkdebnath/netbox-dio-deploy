@@ -3,18 +3,21 @@
 This module provides:
 - Automatic chunking of device lists at 1000 devices per chunk
 - Per-device error reporting for batch operations
+- Enhanced error aggregation and summary reporting
 - Integration with DiodeClient for transmission
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, List, Dict, Any
+import time
 
 from netboxlabs.diode.sdk.ingester import Entity
 
 from .client import DiodeClient, DiodeClientError
 from .converter import convert_device_to_entities
+from .exceptions import DiodeBatchError
 
 
 @dataclass
@@ -24,17 +27,41 @@ class DeviceError:
     Captures errors during conversion or transmission to enable
     granular error reporting and potential retry logic.
     """
+
     device_name: str
     error_message: str
     original_dict: dict
+    stack_trace: Optional[str] = None
+    device_type: Optional[str] = None
+    timing_ms: Optional[float] = None
 
     @classmethod
-    def from_exception(cls, device_name: str, exc: Exception, original_dict: dict) -> DeviceError:
-        """Create a DeviceError from an exception."""
+    def from_exception(
+        cls,
+        device_name: str,
+        exc: Exception,
+        original_dict: dict,
+        stack_trace: Optional[str] = None,
+        device_type: Optional[str] = None,
+        timing_ms: Optional[float] = None,
+    ) -> DeviceError:
+        """Create a DeviceError from an exception.
+
+        Args:
+            device_name: The name of the device that failed
+            exc: The exception that occurred
+            original_dict: The original device dictionary
+            stack_trace: Optional stack trace string
+            device_type: Optional device type from original dict
+            timing_ms: Optional timing information in milliseconds
+        """
         return cls(
             device_name=device_name,
             error_message=str(exc),
             original_dict=original_dict,
+            stack_trace=stack_trace,
+            device_type=device_type,
+            timing_ms=timing_ms,
         )
 
 
@@ -45,6 +72,7 @@ class BatchResult:
     Tracks the outcome of processing a batch of devices including
     success/failure counts and per-device error details.
     """
+
     total: int
     success: int
     failed: int
@@ -57,6 +85,49 @@ class BatchResult:
                 f"Success count ({self.success}) + failed count ({self.failed}) "
                 f"must equal total ({self.total})"
             )
+
+    def get_error_summary(self) -> Dict[str, int]:
+        """Get a summary of error types and their counts.
+
+        Returns:
+            Dictionary mapping error type names to their counts
+        """
+        summary: Dict[str, int] = {}
+        for error in self.errors:
+            # Extract the exception type
+            error_type = type(error).__name__
+            if error_type not in summary:
+                summary[error_type] = 0
+            summary[error_type] += 1
+
+        # Also check for specific exception types in error messages
+        for error in self.errors:
+            if "ValidationError" in error.error_message:
+                summary["DiodeValidationError"] = summary.get("DiodeValidationError", 0) + 1
+            elif "ConversionError" in error.error_message:
+                summary["DiodeConversionError"] = summary.get("DiodeConversionError", 0) + 1
+            elif "ClientError" in error.error_message:
+                summary["DiodeClientError"] = summary.get("DiodeClientError", 0) + 1
+            elif "ServerResponseError" in error.error_message:
+                summary["DiodeServerResponseError"] = summary.get("DiodeServerResponseError", 0) + 1
+
+        return summary
+
+    def get_failed_devices(self) -> List[str]:
+        """Get a list of failed device names.
+
+        Returns:
+            List of device names that failed during processing
+        """
+        return [error.device_name for error in self.errors]
+
+    def has_errors(self) -> bool:
+        """Check if there were any errors in the batch.
+
+        Returns:
+            True if any devices failed, False otherwise
+        """
+        return self.failed > 0
 
 
 class BatchProcessor:
@@ -136,6 +207,7 @@ class BatchProcessor:
         errors: list[DeviceError] = []
 
         for device in devices:
+            start_time = time.time()
             try:
                 # Convert device to entities
                 entities = convert_device_to_entities(device)
@@ -144,10 +216,21 @@ class BatchProcessor:
                 success_count += 1
             except Exception as e:
                 failed_count += 1
+                # Get device type from original dict if available
+                device_type = None
+                if hasattr(device, "__dict__"):
+                    device_type = getattr(device, "device_type", None)
+                elif isinstance(device, dict):
+                    device_type = device.get("device_type")
+
+                timing_ms = (time.time() - start_time) * 1000
                 errors.append(DeviceError.from_exception(
                     device_name=getattr(device, "name", "unknown"),
                     exc=e,
                     original_dict=getattr(device, "__dict__", {}),
+                    stack_trace=None,
+                    device_type=device_type,
+                    timing_ms=timing_ms,
                 ))
 
         return BatchResult(
@@ -158,13 +241,14 @@ class BatchProcessor:
         )
 
     def process_batch(
-        self, client: DiodeClient, devices: list
+        self, client: DiodeClient, devices: list, return_on_first_error: bool = False
     ) -> BatchResult:
         """Process all devices, automatically chunking as needed.
 
         Args:
             client: DiodeClient for transmission
             devices: List of DiodeDevice instances to process
+            return_on_first_error: If True, return immediately on first error
 
         Returns:
             BatchResult with aggregated results across all chunks
@@ -180,6 +264,10 @@ class BatchProcessor:
             total_success += result.success
             total_failed += result.failed
             all_errors.extend(result.errors)
+
+            # Check if we should return on first error
+            if return_on_first_error and result.failed > 0:
+                break
 
         return BatchResult(
             total=len(devices),
@@ -209,6 +297,38 @@ class BatchProcessor:
             result.append((chunk_num, entities))
 
         return result
+
+
+class BatchError(DiodeBatchError):
+    """Exception for batch-level failures.
+
+    Aggregates multiple DeviceErrors and provides summary statistics.
+    """
+
+    def __init__(
+        self,
+        message: str,
+        errors: Optional[List[DeviceError]] = None,
+        total: Optional[int] = None,
+        failed: Optional[int] = None,
+        summary: Optional[Dict[str, int]] = None,
+    ) -> None:
+        """Initialize a BatchError.
+
+        Args:
+            message: The batch error message
+            errors: List of individual device errors
+            total: Total number of devices in the batch
+            failed: Number of failed devices
+            summary: Dictionary summarizing error types and counts
+        """
+        super().__init__(
+            message,
+            errors=errors or [],
+            total=total,
+            failed=failed,
+            summary=summary,
+        )
 
 
 def create_message_chunks(devices: list) -> list[tuple[int, list[Entity]]]:
@@ -245,5 +365,6 @@ __all__ = [
     "BatchProcessor",
     "BatchResult",
     "DeviceError",
+    "BatchError",
     "create_message_chunks",
 ]

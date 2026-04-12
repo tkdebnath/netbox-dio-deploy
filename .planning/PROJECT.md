@@ -8,11 +8,30 @@ A high-level Python wrapper package for the NetBox Diode SDK that provides a "De
 
 Enable network automation engineers to define network devices as Python dictionaries and push them to NetBox Diode with minimal code, while enforcing data integrity and validation.
 
+## Current State
+
+**Shipped:** v1.0 MVP (2026-04-12)
+
+The package is fully functional with:
+- Pydantic `DiodeDevice` model with mandatory field validation
+- Converter module for Pydantic-to-Protobuf conversion
+- Complete subcomponent support (interfaces, VLANs, modules, cables, prefixes, IPs)
+- I/O layer with gRPC client and batch processing
+- Comprehensive exception hierarchy with 9 error types
+
 ## Requirements
 
 ### Validated
 
-(None yet — ship to validate)
+- ✓ **CORE-06**: Configuration via environment variables for Diode gRPC connection — v1.0
+- ✓ **CORE-07**: Error reporting via exceptions (ValueError/TypeError) — v1.0
+- ✓ **CORE-08**: Support for batch operations across multiple device dictionaries — v1.0
+- ✓ **INTF-01** to **INTF-06**: Interface parsing with type-specific handling — v1.0
+- ✓ **VLAN-01** to **VLAN-04**: VLAN parsing and management — v1.0
+- ✓ **MOD-01** to **MOD-04**: Module bay parsing and management — v1.0
+- ✓ **CABLE-01** to **CABLE-03**: Cable relationship mapping — v1.0
+- ✓ **PREFIX-01** to **PREFIX-03**: Prefix management with IPv4/IPv6 support — v1.0
+- ✓ **IP-01** to **IP-03**: IP interface management — v1.0
 
 ### Active
 
@@ -21,15 +40,7 @@ Enable network automation engineers to define network devices as Python dictiona
 - [ ] **CORE-03**: Package must use `netboxlabs-diode-sdk` as the base dependency
 - [ ] **CORE-04**: Package must use `pydantic` for schema validation
 - [ ] **CORE-05**: Target Python 3.10+
-- [ ] **CORE-06**: Configuration via environment variables for Diode gRPC connection
-- [ ] **CORE-07**: Error reporting via exceptions (ValueError/TypeError)
-- [ ] **CORE-08**: Support for batch operations across multiple device dictionaries
-- [ ] **INTF-01**: Interface parsing with type-specific handling
-- [ ] **INTF-02**: VLAN parsing and management
-- [ ] **MOD-01**: Module bay parsing and management
-- [ ] **CABLE-01**: Cable relationship mapping
-- [ ] **PREFIX-01**: Prefix management
-- [ ] **IP-01**: IP interface management
+- [ ] **DEV-01** to **DEV-08**: Device structure attributes (serial, asset_tag, platform, etc.)
 
 ### Out of Scope
 
@@ -66,4 +77,4 @@ The wrapper will be used in network automation scripts, CI/CD pipelines, and inf
 | Environment variable config | Standard for containerized/automated envs | Easy integration with CI/CD and Kubernetes |
 
 ---
-*Last updated: 2026-04-12 after initialization*
+*Last updated: 2026-04-12 after v1.0 milestone*

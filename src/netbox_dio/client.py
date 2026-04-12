@@ -5,12 +5,14 @@ This module provides a wrapper around the Diode SDK's gRPC client with:
 - Dry-run mode support
 - Connection management
 - Single and batch device transmission
+- Enhanced error handling with specific exception types
 """
 
 from __future__ import annotations
 
 import os
 import json
+import re
 from dataclasses import dataclass
 from typing import Optional
 
@@ -18,6 +20,13 @@ from netboxlabs.diode.sdk import DiodeClient as DiodeSdkClient
 from netboxlabs.diode.sdk.ingester import Entity
 
 from .converter import convert_device_to_entities
+from .exceptions import (
+    DiodeClientError,
+    DiodeServerResponseError,
+    DiodeConnectionRefusedError,
+    DiodeTimeoutError,
+    DiodeAuthenticationError,
+)
 
 
 @dataclass
@@ -49,13 +58,24 @@ class ConnectionConfig:
             ConnectionConfig with values from environment or defaults
 
         Raises:
-            ValueError: If DIODE_ENDPOINT is not set
+            DiodeValidationError: If DIODE_ENDPOINT is not set or invalid
         """
         endpoint = os.environ.get("DIODE_ENDPOINT")
         if not endpoint:
-            raise ValueError(
-                "DIODE_ENDPOINT environment variable is required. "
-                "Set the Diode gRPC endpoint URL (e.g., 'diode.example.com:443')"
+            from .exceptions import DiodeValidationError
+            raise DiodeValidationError(
+                "DIODE_ENDPOINT environment variable is required",
+                field_name="DIODE_ENDPOINT",
+                value=None,
+            )
+
+        # Validate endpoint format (must include port)
+        if not cls._validate_endpoint_format(endpoint):
+            from .exceptions import DiodeValidationError
+            raise DiodeValidationError(
+                f"Invalid endpoint format: '{endpoint}'. Expected format: 'host:port'",
+                field_name="DIODE_ENDPOINT",
+                value=endpoint,
             )
 
         return cls(
@@ -66,6 +86,31 @@ class ConnectionConfig:
             skip_tls_verify=os.environ.get("DIODE_SKIP_TLS_VERIFY", "false").lower() == "true",
             dry_run_output_dir=os.environ.get("DIODE_DRY_RUN_OUTPUT_DIR"),
         )
+
+    @staticmethod
+    def _validate_endpoint_format(endpoint: str) -> bool:
+        """Validate that endpoint has valid format with port.
+
+        Args:
+            endpoint: The endpoint string to validate
+
+        Returns:
+            True if endpoint has valid format (host:port)
+        """
+        # Pattern: host:port where port is 1-5 digits
+        pattern = r'^[a-zA-Z0-9.-]+:\d{1,5}$'
+        if not re.match(pattern, endpoint):
+            return False
+
+        # Extract and validate port
+        parts = endpoint.rsplit(':', 1)
+        if len(parts) != 2:
+            return False
+        try:
+            port = int(parts[1])
+            return 1 <= port <= 65535
+        except ValueError:
+            return False
 
     def to_diode_config(self):
         """Create Diode SDK ClientConfig from this ConnectionConfig.
@@ -82,12 +127,8 @@ class ConnectionConfig:
         )
 
 
-class DiodeClientError(Exception):
-    """Exception raised for Diode I/O errors.
-
-    Wraps lower-level gRPC errors and provides contextual information.
-    """
-    pass
+# Re-export at module level for convenience
+__all__ = ["DiodeClient", "ConnectionConfig", "DiodeClientError"]
 
 
 class DiodeClient:
@@ -98,6 +139,7 @@ class DiodeClient:
     - Sending single devices or batches
     - Dry-run mode for testing without transmission
     - Connection lifecycle management
+    - Enhanced error handling with specific exception types
 
     Example:
         >>> from netbox_dio import DiodeClient, ConnectionConfig
@@ -143,7 +185,10 @@ class DiodeClient:
         - OAuth2 credentials used if provided
 
         Raises:
-            DiodeClientError: If connection fails
+            DiodeConnectionRefusedError: If connection is actively refused
+            DiodeTimeoutError: If connection times out
+            DiodeAuthenticationError: If authentication fails
+            DiodeClientError: For other connection failures
         """
         if self._dry_run_mode:
             self._connected = True
@@ -174,19 +219,41 @@ class DiodeClient:
             self._client = DiodeSdkClient(**client_kwargs)
             self._connected = True
         except Exception as e:
-            raise DiodeClientError(f"Failed to connect to Diode: {e}")
+            # Determine the specific error type
+            error_str = str(e).lower()
 
-    def send_single(self, device) -> Entity:
+            # Check for connection refused
+            if "refused" in error_str or "connection refused" in error_str or "connectionerror" in error_str:
+                raise DiodeConnectionRefusedError(target) from e
+
+            # Check for timeout
+            if "timeout" in error_str or "deadline" in error_str or "timed out" in error_str:
+                raise DiodeTimeoutError(target) from e
+
+            # Check for authentication errors
+            if "auth" in error_str or "unauthorized" in error_str or "forbidden" in error_str:
+                raise DiodeAuthenticationError(str(e), target) from e
+
+            # General connection error
+            raise DiodeClientError(
+                f"Failed to connect to Diode at {target}: {e}",
+                endpoint=target,
+                original_error=e,
+            ) from e
+
+    def send_single(self, device, device_name: Optional[str] = None) -> Entity:
         """Convert and send a single device to Diode.
 
         Args:
             device: DiodeDevice instance to send
+            device_name: Optional device name for error messages
 
         Returns:
             Entity protobuf message that was sent
 
         Raises:
             DiodeClientError: If not connected or send fails
+            DiodeServerResponseError: If Diode server returns an error
         """
         if self._dry_run_mode:
             return self._dry_run_send_single(device)
@@ -196,13 +263,36 @@ class DiodeClient:
                 "Not connected to Diode. Call connect() first."
             )
 
+        name = device_name or getattr(device, "name", "unknown")
+
         try:
             entities = convert_device_to_entities(device)
             result = self._client.ingest(entities)
             # Return the first entity from the result
             return entities[0] if entities else None
         except Exception as e:
-            raise DiodeClientError(f"Failed to send device to Diode: {e}")
+            error_str = str(e).lower()
+
+            # Check for server response errors
+            if "not found" in error_str or "404" in error_str or "resource" in error_str:
+                raise DiodeServerResponseError(
+                    f"Diode server error for device '{name}': {e}",
+                    device_name=name,
+                ) from e
+
+            # Check for authentication errors
+            if "auth" in error_str or "unauthorized" in error_str or "401" in error_str or "403" in error_str or "forbidden" in error_str:
+                raise DiodeAuthenticationError(
+                    f"Authentication failed for device '{name}': {e}",
+                    endpoint=self._config.endpoint,
+                ) from e
+
+            # General send error
+            raise DiodeClientError(
+                f"Failed to send device '{name}' to Diode: {e}",
+                endpoint=self._config.endpoint,
+                original_error=e,
+            ) from e
 
     def send_batch(self, entities: list[Entity]) -> None:
         """Send a batch of entities to Diode.
@@ -212,6 +302,7 @@ class DiodeClient:
 
         Raises:
             DiodeClientError: If not connected or send fails
+            DiodeServerResponseError: If Diode server returns an error
         """
         if self._dry_run_mode:
             return self._dry_run_send_batch(entities)
@@ -224,7 +315,27 @@ class DiodeClient:
         try:
             self._client.ingest(entities)
         except Exception as e:
-            raise DiodeClientError(f"Failed to send batch to Diode: {e}")
+            error_str = str(e).lower()
+
+            # Check for server response errors
+            if "not found" in error_str or "404" in error_str or "resource" in error_str:
+                raise DiodeServerResponseError(
+                    f"Diode server error for batch ({len(entities)} entities): {e}",
+                ) from e
+
+            # Check for authentication errors
+            if "auth" in error_str or "unauthorized" in error_str or "401" in error_str or "403" in error_str or "forbidden" in error_str:
+                raise DiodeAuthenticationError(
+                    f"Authentication failed for batch ({len(entities)} entities): {e}",
+                    endpoint=self._config.endpoint,
+                ) from e
+
+            # General send error
+            raise DiodeClientError(
+                f"Failed to send batch ({len(entities)} entities) to Diode: {e}",
+                endpoint=self._config.endpoint,
+                original_error=e,
+            ) from e
 
     def close(self) -> None:
         """Close the gRPC connection to Diode."""
@@ -253,7 +364,6 @@ class DiodeClient:
         return os.path.join(self._config.dry_run_output_dir, filename)
 
     def _write_dry_run_output(self, path: str, entities: list[Entity]) -> None:
-        """Write entity to JSON file for dry-run mode."""
 
         def _to_string(value):
             """Convert protobuf enum or object to string."""
