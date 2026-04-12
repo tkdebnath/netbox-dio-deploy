@@ -55,6 +55,11 @@ from .models import (
     DiodeIPAddress,
     IPAddressStatus,
     IPAddressRole,
+    DiodeRack,
+    DiodePDU,
+    DiodePowerOutlet,
+    DiodeCircuit,
+    DiodePowerFeed,
 )
 from .converter import (
     convert_device,
@@ -71,6 +76,20 @@ from .converter import (
 
 from .client import DiodeClient, ConnectionConfig
 from .batch import BatchProcessor, BatchResult, DeviceError, create_message_chunks
+from .export import (
+    to_json,
+    to_yaml,
+    to_netbox_yaml,
+    export_devices,
+)
+from .importer import (
+    import_from_json,
+    import_from_yaml,
+    from_file,
+    from_netbox_api,
+    validate_import,
+    parse_import_errors,
+)
 
 __all__ = [
     # Exception hierarchy
@@ -108,6 +127,11 @@ __all__ = [
     "DiodeIPAddress",
     "IPAddressStatus",
     "IPAddressRole",
+    "DiodeRack",
+    "DiodePDU",
+    "DiodePowerOutlet",
+    "DiodeCircuit",
+    "DiodePowerFeed",
     # Converter
     "convert_device",
     "convert_device_to_entities",
@@ -127,4 +151,16 @@ __all__ = [
     "BatchResult",
     "DeviceError",
     "create_message_chunks",
+    # Export
+    "to_json",
+    "to_yaml",
+    "to_netbox_yaml",
+    "export_devices",
+    # Import
+    "import_from_json",
+    "import_from_yaml",
+    "from_file",
+    "from_netbox_api",
+    "validate_import",
+    "parse_import_errors",
 ]
