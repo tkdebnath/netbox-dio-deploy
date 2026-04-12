@@ -7,6 +7,10 @@ from .module import DiodeModule, ModuleStatus, DiodeModuleBay, ModuleBayPosition
 from .cable import DiodeCable, CableType, CableStatus, CableTerminationPoint, CableTerminationPointType
 from .prefix import DiodePrefix, PrefixStatus, PrefixRole
 from .ip_address import DiodeIPAddress, IPAddressStatus, IPAddressRole
+from .rack import DiodeRack
+from .pdu import DiodePDU, DiodePowerOutlet
+from .power_circuit import DiodeCircuit
+from .power_feed import DiodePowerFeed
 
 __all__ = [
     "DiodeDevice",
@@ -33,4 +37,9 @@ __all__ = [
     "DiodeIPAddress",
     "IPAddressStatus",
     "IPAddressRole",
+    "DiodeRack",
+    "DiodePDU",
+    "DiodePowerOutlet",
+    "DiodeCircuit",
+    "DiodePowerFeed",
 ]

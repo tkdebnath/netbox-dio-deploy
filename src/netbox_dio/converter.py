@@ -9,9 +9,9 @@ from __future__ import annotations
 
 from typing import Optional
 
-from netboxlabs.diode.sdk.ingester import Entity, Device, Interface, VLAN, Module, ModuleBay, Cable, Prefix, IPAddress, GenericObject
+from netboxlabs.diode.sdk.ingester import Entity, Device, Interface, VLAN, Module, ModuleBay, Cable, Prefix, IPAddress, GenericObject, Rack, PowerPanel, Circuit, PowerFeed
 
-from .models import DiodeDevice, DiodeInterface, DiodeVLAN, DiodeModule, DiodeModuleBay, DiodeCable, DiodePrefix, DiodeIPAddress
+from .models import DiodeDevice, DiodeInterface, DiodeVLAN, DiodeModule, DiodeModuleBay, DiodeCable, DiodePrefix, DiodeIPAddress, DiodeRack, DiodePDU, DiodeCircuit, DiodePowerFeed
 from .exceptions import DiodeConversionError
 
 
@@ -580,6 +580,217 @@ def convert_device_with_subcomponents(device: DiodeDevice) -> list[Entity]:
     return entities
 
 
+def convert_rack(rack: DiodeRack) -> Entity:
+    """Convert a DiodeRack to a Diode Entity protobuf message.
+
+    Args:
+        rack: The DiodeRack instance to convert
+
+    Returns:
+        Entity protobuf message with rack populated
+
+    Raises:
+        DiodeConversionError: If conversion fails
+    """
+    try:
+        rack_pb = Rack(
+            name=rack.name,
+            site=rack.site,
+            rack_type=rack.rack_type,
+            serial=rack.serial,
+            asset_tag=rack.asset_tag,
+            role=rack.role,
+            u_height=rack.u_height,
+            starting_unit=rack.starting_unit,
+            description=rack.description,
+            status=rack.status,
+            location=rack.location,
+            airflow=rack.airflow,
+            form_factor=rack.form_factor,
+            weight=rack.weight,
+            weight_unit=rack.weight_unit,
+            mounting_depth=rack.mounting_depth,
+            outer_height=rack.outer_height,
+            outer_depth=rack.outer_depth,
+            outer_width=rack.outer_width,
+            outer_unit=rack.outer_unit,
+            max_weight=rack.max_weight,
+            desc_units=rack.desc_units,
+            comments=rack.comments,
+            custom_fields=rack.custom_fields,
+            metadata=rack.metadata,
+            owner=rack.owner,
+            tags=rack.tags,
+            tenant=rack.tenant,
+            facility_id=rack.facility_id,
+            width=rack.width,
+        )
+
+        return Entity(rack=rack_pb)
+    except Exception as e:
+        raise _wrap_conversion_error(
+            "convert_rack",
+            rack.name,
+            e,
+            None,
+            "rack",
+        )
+
+
+def convert_pdu(pdu: DiodePDU) -> Entity:
+    """Convert a DiodePDU to a Diode Entity protobuf message.
+
+    Args:
+        pdu: The DiodePDU instance to convert
+
+    Returns:
+        Entity protobuf message with power_panel populated
+
+    Raises:
+        DiodeConversionError: If conversion fails
+    """
+    try:
+        power_panel = PowerPanel(
+            name=pdu.name,
+            site=pdu.site,
+            description=pdu.description,
+            comments=pdu.comments,
+            custom_fields=pdu.custom_fields,
+            metadata=pdu.metadata,
+            owner=pdu.owner,
+            tags=pdu.tags,
+        )
+
+        return Entity(power_panel=power_panel)
+    except Exception as e:
+        raise _wrap_conversion_error(
+            "convert_pdu",
+            pdu.name,
+            e,
+            None,
+            "pdu",
+        )
+
+
+def convert_circuit(circuit: DiodeCircuit) -> Entity:
+    """Convert a DiodeCircuit to a Diode Entity protobuf message.
+
+    Args:
+        circuit: The DiodeCircuit instance to convert
+
+    Returns:
+        Entity protobuf message with circuit populated
+
+    Raises:
+        DiodeConversionError: If conversion fails
+    """
+    try:
+        circuit_pb = Circuit(
+            cid=circuit.cid,
+            type=circuit.type,
+            provider=circuit.provider,
+            provider_account=circuit.provider_account,
+            status=circuit.status,
+            assignments=circuit.assignments,
+            install_date=circuit.install_date,
+            commit_rate=circuit.commit_rate,
+            distance=circuit.distance,
+            distance_unit=circuit.distance_unit,
+            tenant=circuit.tenant,
+            description=circuit.description,
+            comments=circuit.comments,
+            tags=circuit.tags,
+            custom_fields=circuit.custom_fields,
+            metadata=circuit.metadata,
+            owner=circuit.owner,
+        )
+
+        return Entity(circuit=circuit_pb)
+    except Exception as e:
+        raise _wrap_conversion_error(
+            "convert_circuit",
+            circuit.cid,
+            e,
+            None,
+            "circuit",
+        )
+
+
+def convert_power_feed(power_feed: DiodePowerFeed) -> Entity:
+    """Convert a DiodePowerFeed to a Diode Entity protobuf message.
+
+    Args:
+        power_feed: The DiodePowerFeed instance to convert
+
+    Returns:
+        Entity protobuf message with power_feed populated
+
+    Raises:
+        DiodeConversionError: If conversion fails
+    """
+    try:
+        power_feed_pb = PowerFeed(
+            name=power_feed.name,
+            power_panel=power_feed.power_panel,
+            phase=power_feed.phase,
+            supply=power_feed.supply,
+            voltage=power_feed.voltage,
+            amperage=power_feed.amperage,
+            rack=power_feed.rack,
+            status=power_feed.status,
+            description=power_feed.description,
+            comments=power_feed.comments,
+            tags=power_feed.tags,
+            custom_fields=power_feed.custom_fields,
+            metadata=power_feed.metadata,
+            owner=power_feed.owner,
+            mark_connected=power_feed.mark_connected,
+            max_utilization=power_feed.max_utilization,
+            tenant=power_feed.tenant,
+            type=power_feed.type,
+        )
+
+        return Entity(power_feed=power_feed_pb)
+    except Exception as e:
+        raise _wrap_conversion_error(
+            "convert_power_feed",
+            power_feed.name,
+            e,
+            None,
+            "power_feed",
+        )
+
+
+def convert_device_with_power(device: DiodeDevice) -> list[Entity]:
+    """Convert a DiodeDevice to a list of Diode Entity protobuf messages.
+
+    This function converts the main device entity plus any power components
+    (racks, PDUs, circuits, power feeds) that may be associated with the device.
+
+    Args:
+        device: The DiodeDevice instance to convert
+
+    Returns:
+        List of Entity protobuf messages (device plus power components)
+
+    Raises:
+        DiodeConversionError: If conversion fails
+    """
+    entities = []
+
+    try:
+        entities.append(convert_device(device))
+    except DiodeConversionError as e:
+        raise DiodeConversionError(
+            f"Failed to convert main device '{device.name}': {e.message}",
+            device_name=device.name,
+            original_dict=getattr(device, "__dict__", {}),
+            conversion_type="device",
+        )
+
+    return entities
+
+
 __all__ = [
     "convert_device",
     "convert_device_to_entities",
@@ -591,4 +802,9 @@ __all__ = [
     "convert_prefix",
     "convert_ip_address",
     "convert_device_with_subcomponents",
+    "convert_rack",
+    "convert_pdu",
+    "convert_circuit",
+    "convert_power_feed",
+    "convert_device_with_power",
 ]
