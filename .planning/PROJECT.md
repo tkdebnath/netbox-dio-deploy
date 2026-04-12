@@ -19,6 +19,14 @@ The package is fully functional with:
 - I/O layer with gRPC client and batch processing
 - Comprehensive exception hierarchy with 9 error types
 
+**Next Milestone:** v1.1 (2026-04-12)
+
+New features for v1.1:
+- CLI tool for importing/exporting device data from JSON/YAML files
+- Models for racks, PDUs, power circuits, and power feeds
+- Export to JSON, YAML, and NetBox YAML format for easy data exchange
+- Import existing NetBox data via API for migration/backup workflows
+
 ## Requirements
 
 ### Validated
@@ -35,12 +43,20 @@ The package is fully functional with:
 
 ### Active
 
-- [ ] **CORE-01**: `DiodeDevice` class must enforce mandatory fields (name, site, device_type, role) on initialization
-- [ ] **CORE-02**: `DiodeDevice.from_dict()` class method must parse the exact nested dictionary structure
-- [ ] **CORE-03**: Package must use `netboxlabs-diode-sdk` as the base dependency
-- [ ] **CORE-04**: Package must use `pydantic` for schema validation
-- [ ] **CORE-05**: Target Python 3.10+
-- [ ] **DEV-01** to **DEV-08**: Device structure attributes (serial, asset_tag, platform, etc.)
+- [ ] **CLI-01**: Command-line interface for importing/exporting device data from JSON/YAML files
+- [ ] **CLI-02**: Support for dry-run mode with output to stdout or file
+- [ ] **CLI-03**: Batch processing with configurable chunk size via CLI
+- [ ] **RACK-01**: Rack model with position, type, and serial attributes
+- [ ] **RACK-02**: Rack unit (RU) allocation tracking
+- [ ] **POWER-01**: PDU model with outlet configuration
+- [ ] **POWER-02**: Power circuit model with voltage and amperage
+- [ ] **POWER-03**: Power feed model with phase and capacity
+- [ ] **EXPORT-01**: Export to JSON format with optional pretty-printing
+- [ ] **EXPORT-02**: Export to YAML format (NetBox-compatible)
+- [ ] **EXPORT-03**: Export to NetBox YAML format with device templates
+- [ ] **IMPORT-01**: Import from NetBox API with filter support
+- [ ] **IMPORT-02**: Import from existing JSON/YAML files
+- [ ] **IMPORT-03**: Import with validation against schema
 
 ### Out of Scope
 
@@ -56,6 +72,9 @@ This project addresses the complexity of the raw Diode SDK by providing:
 - Automatic payload generation for Diode gRPC
 - Validation and error handling at the object level
 - Type-safe interfaces, VLANs, modules, and cables as first-class objects
+- CLI tool for easy integration with shell scripts and automation tools
+- Rack and power models for comprehensive infrastructure modeling
+- Multiple export formats for data exchange and backup
 
 The wrapper will be used in network automation scripts, CI/CD pipelines, and infrastructure-as-code workflows where defining devices as dictionaries is more natural than constructing Diode proto messages directly.
 

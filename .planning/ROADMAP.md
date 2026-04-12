@@ -7,6 +7,7 @@
 ## Milestones
 
 - [x] **v1.0 MVP** — Phases 1-5 (shipped 2026-04-12)
+- [ ] **v1.1** — CLI tool, Racks & Power, Export/Import (Phase 7 done, Phase 8 planned)
 
 ## Phases
 
@@ -46,6 +47,29 @@
 
 </details>
 
+### Phase 6: CLI Module
+**Goal**: Command-line interface for importing/exporting device data
+**Depends on**: Phase 1-5
+**Requirements**: CLI-01, CLI-02, CLI-03
+**Plans**: TBD
+
+### Phase 7: Racks & Power
+**Goal**: Models for racks, PDUs, power circuits, and power feeds
+**Depends on**: Phase 1-5
+**Requirements**: RACK-01, RACK-02, POWER-01, POWER-02, POWER-03
+**Plans**: 1 plan
+- [x] 07-01-PLAN.md — Create Pydantic models for racks, PDUs, circuits, power feeds with converter functions
+
+### Phase 8: Export/Import
+**Goal**: Export to multiple formats and import from NetBox API/files
+**Depends on**: Phase 1-5
+**Requirements**: EXPORT-01, EXPORT-02, EXPORT-03, IMPORT-01, IMPORT-02, IMPORT-03
+**Plans**: 1 plan
+- [x] 08-01-PLAN.md — Export to JSON/YAML, import from NetBox API/files
+
+| 7. Racks & Power | 1/1 | Completed | 2026-04-12 |
+| 8. Export/Import | 1/1 | Completed | 2026-04-12 |
+
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
@@ -55,3 +79,6 @@
 | 3. Device Subcomponents | 1/1 | Completed | 2026-04-12 |
 | 4. I/O Layer | 1/1 | Completed | 2026-04-12 |
 | 5. Validation & Error Handling | 1/1 | Completed | 2026-04-12 |
+| 6. CLI Module | 0/6 | Planned    |  |
+| 7. Racks & Power | 1/1 | Completed | 2026-04-12 |
+| 8. Export/Import | 1/1 | Completed | 2026-04-12 |
