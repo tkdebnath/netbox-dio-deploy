@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>https://netbox-dio.readthedocs.io/</loc>
+         <lastmod>2026-04-12</lastmod>
+    </url>
+    <url>
+         <loc>https://netbox-dio.readthedocs.io/error-handling/</loc>
+         <lastmod>2026-04-12</lastmod>
+    </url>
+    <url>
+         <loc>https://netbox-dio.readthedocs.io/api/</loc>
+         <lastmod>2026-04-12</lastmod>
+    </url>
+    <url>
+         <loc>https://netbox-dio.readthedocs.io/architecture/</loc>
+         <lastmod>2026-04-12</lastmod>
+    </url>
+    <url>
+         <loc>https://netbox-dio.readthedocs.io/cli/</loc>
+         <lastmod>2026-04-12</lastmod>
+    </url>
+    <url>
+         <loc>https://netbox-dio.readthedocs.io/getting-started/</loc>
+         <lastmod>2026-04-12</lastmod>
+    </url>
+    <url>
+         <loc>https://netbox-dio.readthedocs.io/migration/</loc>
+         <lastmod>2026-04-12</lastmod>
+    </url>
+</urlset>

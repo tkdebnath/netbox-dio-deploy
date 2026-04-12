@@ -17,7 +17,7 @@ import tempfile
 import pytest
 from unittest.mock import Mock, patch, MagicMock
 
-from netbox_dio import DiodeClient, ConnectionConfig, DiodeClientError
+from netbox_dio import DiodeClient, ConnectionConfig, DiodeClientError, DiodeValidationError
 from netbox_dio.models import DiodeDevice
 
 
@@ -53,9 +53,9 @@ class TestDiodeClientInitialization:
         assert client._config.skip_tls_verify is True
 
     def test_client_raises_error_without_endpoint(self, monkeypatch):
-        """Test that client raises ValueError without DIODE_ENDPOINT."""
+        """Test that client raises DiodeValidationError without DIODE_ENDPOINT."""
         monkeypatch.delenv("DIODE_ENDPOINT", raising=False)
-        with pytest.raises(ValueError, match="DIODE_ENDPOINT"):
+        with pytest.raises(DiodeValidationError, match="DIODE_ENDPOINT"):
             ConnectionConfig.from_env()
 
     def test_client_dry_run_mode(self, monkeypatch):

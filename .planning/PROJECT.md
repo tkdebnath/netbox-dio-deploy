@@ -11,6 +11,7 @@ Enable network automation engineers to define network devices as Python dictiona
 ## Current State
 
 **Shipped:** v1.1 CLI, Racks & Power, Export/Import (2026-04-12)
+**Shipped:** v1.2 Documentation, CLI Enhancements, Validation Rules, Performance (2026-04-12)
 
 The package is fully functional with:
 - Pydantic `DiodeDevice` model with mandatory field validation
@@ -22,6 +23,13 @@ The package is fully functional with:
 - `DiodeRack`, `DiodePDU`, `DiodeCircuit`, `DiodePowerFeed` models
 - Export to JSON, YAML, and NetBox YAML formats
 - Import from NetBox API and existing files
+- MkDocs API documentation with Material theme
+- Configuration file support for CLI
+- Tab completion for bash/zsh
+- Custom validation framework with RuleRegistry and ValidatorPipeline
+- Data quality metrics reporting (completeness, validity)
+- Caching layer with Redis and in-memory backends
+- Optimized batch processing for 100k+ devices
 
 <details>
 <summary><strong>v1.0 MVP (shipped 2026-04-12)</strong></summary>
@@ -62,6 +70,10 @@ The package is fully functional with:
 - ✓ **IMPORT-01**: Import from NetBox API with filter support — v1.1
 - ✓ **IMPORT-02**: Import from existing JSON/YAML files — v1.1
 - ✓ **IMPORT-03**: Import with validation against schema — v1.1
+- ✓ **DOC-01 to DOC-05**: API documentation, tutorials, migration guide, CLI reference, architecture docs — v1.2
+- ✓ **CLI-04 to CLI-06**: Configuration file support, tab completion, progress indicators — v1.2
+- ✓ **VAL-01 to VAL-04**: Custom validation framework, data quality metrics, schema validation, cross-field validation — v1.2
+- ✓ **PERF-01 to PERF-02**: Caching layer, batch operation optimization — v1.2
 
 ### Out of Scope
 
@@ -101,4 +113,4 @@ The wrapper will be used in network automation scripts, CI/CD pipelines, and inf
 | Environment variable config | Standard for containerized/automated envs | Easy integration with CI/CD and Kubernetes |
 
 ---
-*Last updated: 2026-04-12 after v1.1 milestone*
+*Last updated: 2026-04-12 after v1.2 milestone*

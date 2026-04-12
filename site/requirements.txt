@@ -1,0 +1,19 @@
+# Documentation dependencies for NetBox Diode Device Wrapper
+
+# MkDocs and themes
+mkdocs>=1.4.0
+mkdocs-material>=9.0.0
+pdoc>=14.0.0
+
+# Markdown extensions
+markdown>=3.3.0
+mdx_truly_sane_links>=1.0.0
+
+# Code generation
+pymdown-extensions>=10.0.0
+
+# Utilities
+mkdocs-macros-plugin>=0.7.0
+mkdocs-git-revision-date-plugin>=0.3.2
+mkdocs-gen-files>=0.5.0
+mkdocs-literate-nav>=0.5.0

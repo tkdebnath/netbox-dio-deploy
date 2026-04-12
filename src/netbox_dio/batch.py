@@ -70,13 +70,14 @@ class BatchResult:
     """Result of a batch processing operation.
 
     Tracks the outcome of processing a batch of devices including
-    success/failure counts and per-device error details.
+    success/failure counts, per-device error details, and throughput metrics.
     """
 
     total: int
     success: int
     failed: int
     errors: list[DeviceError]
+    timing_ms: Optional[float] = None
 
     def __post_init__(self):
         """Validate result counts."""
@@ -120,6 +121,17 @@ class BatchResult:
             List of device names that failed during processing
         """
         return [error.device_name for error in self.errors]
+
+    @property
+    def throughput_sps(self) -> float:
+        """Calculate throughput in devices per second.
+
+        Returns:
+            Devices per second processed, or 0.0 if no timing data
+        """
+        if self.timing_ms is None or self.timing_ms == 0:
+            return 0.0
+        return (self.total / self.timing_ms) * 1000
 
     def has_errors(self) -> bool:
         """Check if there were any errors in the batch.
@@ -200,14 +212,14 @@ class BatchProcessor:
             devices: List of DiodeDevice instances to process
 
         Returns:
-            BatchResult with success/failure counts and errors
+            BatchResult with success/failure counts, errors, and timing
         """
+        start_time = time.time()
         success_count = 0
         failed_count = 0
         errors: list[DeviceError] = []
 
         for device in devices:
-            start_time = time.time()
             try:
                 # Convert device to entities
                 entities = convert_device_to_entities(device)
@@ -223,21 +235,23 @@ class BatchProcessor:
                 elif isinstance(device, dict):
                     device_type = device.get("device_type")
 
-                timing_ms = (time.time() - start_time) * 1000
                 errors.append(DeviceError.from_exception(
                     device_name=getattr(device, "name", "unknown"),
                     exc=e,
                     original_dict=getattr(device, "__dict__", {}),
                     stack_trace=None,
                     device_type=device_type,
-                    timing_ms=timing_ms,
+                    timing_ms=None,
                 ))
+
+        total_timing_ms = (time.time() - start_time) * 1000
 
         return BatchResult(
             total=len(devices),
             success=success_count,
             failed=failed_count,
             errors=errors,
+            timing_ms=total_timing_ms,
         )
 
     def process_batch(
@@ -253,6 +267,7 @@ class BatchProcessor:
         Returns:
             BatchResult with aggregated results across all chunks
         """
+        start_time = time.time()
         total_success = 0
         total_failed = 0
         all_errors: list[DeviceError] = []
@@ -269,11 +284,14 @@ class BatchProcessor:
             if return_on_first_error and result.failed > 0:
                 break
 
+        total_timing_ms = (time.time() - start_time) * 1000
+
         return BatchResult(
             total=len(devices),
             success=total_success,
             failed=total_failed,
             errors=all_errors,
+            timing_ms=total_timing_ms,
         )
 
     def get_chunked_payloads(

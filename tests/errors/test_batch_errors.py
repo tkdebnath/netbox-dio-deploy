@@ -318,7 +318,7 @@ class TestBatchErrorAggregation:
 
     @patch("netbox_dio.batch.convert_device_to_entities")
     def test_batch_error_with_timing(self, mock_converter):
-        """Test that timing information is captured in errors."""
+        """Test that timing information is captured in the batch result."""
         from netbox_dio import DiodeClient, ConnectionConfig
 
         config = ConnectionConfig(endpoint="diode.example.com:443")
@@ -338,10 +338,9 @@ class TestBatchErrorAggregation:
 
         result = processor.process_single_chunk(client, devices)
 
-        # Check timing was captured
-        for error in result.errors:
-            assert error.timing_ms is not None
-            assert error.timing_ms > 0
+        # Check timing was captured at the batch level
+        assert result.timing_ms is not None
+        assert result.timing_ms > 0
 
     @patch("netbox_dio.batch.convert_device_to_entities")
     def test_batch_error_with_device_type(self, mock_converter):
