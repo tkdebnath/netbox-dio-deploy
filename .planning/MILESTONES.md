@@ -2,12 +2,15 @@
 
 ## v1.1 CLI, Racks & Power, Export/Import (Shipped: 2026-04-12)
 
-**Phases completed:** 3 phases, 8 plans, 6 tasks
+**Phases completed:** 3 phases, 8 plans, 15 tasks
 
 **Key accomplishments:**
 
-- Pydantic models for racks, PDUs, power circuits, and power feeds with Diode SDK protobuf conversion
-- Phase:
+- CLI module with 96 tests covering import/export commands, dry-run mode, and batch processing
+- DiodeRack, DiodePDU, DiodeCircuit, DiodePowerFeed models with 60 tests
+- Export/Import module with JSON/YAML/NetBox YAML export and NetBox API import with 73 tests
+- Complete support for network infrastructure modeling and data exchange
+
 
 ---
 
