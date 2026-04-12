@@ -58,6 +58,9 @@ from .converter import (
     convert_device_with_subcomponents,
 )
 
+from .client import DiodeClient, ConnectionConfig, DiodeClientError
+from .batch import BatchProcessor, BatchResult, DeviceError, create_message_chunks
+
 __all__ = [
     "DiodeDevice",
     "DiodeInterface",
@@ -93,4 +96,11 @@ __all__ = [
     "convert_prefix",
     "convert_ip_address",
     "convert_device_with_subcomponents",
+    "DiodeClient",
+    "ConnectionConfig",
+    "DiodeClientError",
+    "BatchProcessor",
+    "BatchResult",
+    "DeviceError",
+    "create_message_chunks",
 ]
