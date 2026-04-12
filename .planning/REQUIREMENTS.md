@@ -14,9 +14,9 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **CORE-03**: Package must use `netboxlabs-diode-sdk` as the base dependency
 - [ ] **CORE-04**: Package must use `pydantic` for schema validation
 - [ ] **CORE-05**: Target Python 3.10+
-- [ ] **CORE-06**: Configuration via environment variables for Diode gRPC connection (endpoint, client_id, client_secret)
+- [x] **CORE-06**: Configuration via environment variables for Diode gRPC connection (endpoint, client_id, client_secret)
 - [ ] **CORE-07**: Error reporting via exceptions (ValueError/TypeError) for validation failures
-- [ ] **CORE-08**: Support for batch operations across multiple device dictionaries
+- [x] **CORE-08**: Support for batch operations across multiple device dictionaries
 
 ### Device Structure
 
@@ -31,51 +31,51 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Interfaces
 
-- [ ] **INTF-01**: Interface parsing with type-specific handling (physical, virtual, LAG, wireless)
-- [ ] **INTF-02**: Interface description field support
-- [ ] **INTF-03**: Interface enabled/disabled state
-- [ ] **INTF-04**: Interface MTU configuration
-- [ ] **INTF-05**: Interface speed/type specification
-- [ ] **INTF-06**: Interface VLAN assignment (untagged/tagged)
+- [x] **INTF-01**: Interface parsing with type-specific handling (physical, virtual, LAG, wireless)
+- [x] **INTF-02**: Interface description field support
+- [x] **INTF-03**: Interface enabled/disabled state
+- [x] **INTF-04**: Interface MTU configuration
+- [x] **INTF-05**: Interface speed/type specification
+- [x] **INTF-06**: Interface VLAN assignment (untagged/tagged)
 
 ### VLANs
 
-- [ ] **VLAN-01**: VLAN creation with VID and name
-- [ ] **VLAN-02**: VLAN status management (active, reserved, deprecated)
-- [ ] **VLAN-03**: VLAN group assignment
-- [ ] **VLAN-04**: Site assignment for VLANs
+- [x] **VLAN-01**: VLAN creation with VID and name
+- [x] **VLAN-02**: VLAN status management (active, reserved, deprecated)
+- [x] **VLAN-03**: VLAN group assignment
+- [x] **VLAN-04**: Site assignment for VLANs
 
 ### Modules
 
-- [ ] **MOD-01**: Module bay parsing and management
-- [ ] **MOD-02**: Module type specification
-- [ ] **MOD-03**: Module serial number tracking
-- [ ] **MOD-04**: Module status management
+- [x] **MOD-01**: Module bay parsing and management
+- [x] **MOD-02**: Module type specification
+- [x] **MOD-03**: Module serial number tracking
+- [x] **MOD-04**: Module status management
 
 ### Cables
 
-- [ ] **CABLE-01**: Cable relationship mapping between devices
-- [ ] **CABLE-02**: Termination port specification (source/destination)
-- [ ] **CABLE-03**: Cable type specification
+- [x] **CABLE-01**: Cable relationship mapping between devices
+- [x] **CABLE-02**: Termination port specification (source/destination)
+- [x] **CABLE-03**: Cable type specification
 
 ### Prefixes
 
-- [ ] **PREFIX-01**: Prefix management with IPv4/IPv6 support
-- [ ] **PREFIX-02**: Prefix status management
-- [ ] **PREFIX-03**: Prefix scope assignment (site, site-group, region)
+- [x] **PREFIX-01**: Prefix management with IPv4/IPv6 support
+- [x] **PREFIX-02**: Prefix status management
+- [x] **PREFIX-03**: Prefix scope assignment (site, site-group, region)
 
 ### IP Addresses
 
-- [ ] **IP-01**: IP interface management (IP address on interface)
-- [ ] **IP-02**: Primary IP assignment
-- [ ] **IP-03**: Secondary IP support
+- [x] **IP-01**: IP interface management (IP address on interface)
+- [x] **IP-02**: Primary IP assignment
+- [x] **IP-03**: Secondary IP support
 
 ### Batch Operations
 
-- [ ] **BATCH-01**: Parse multiple devices from dictionary
-- [ ] **BATCH-02**: Batch ingestion via Diode SDK
-- [ ] **BATCH-03**: Automatic chunking for large batches (>1000 devices)
-- [ ] **BATCH-04**: Error reporting per device in batch
+- [x] **BATCH-01**: Parse multiple devices from dictionary
+- [x] **BATCH-02**: Batch ingestion via Diode SDK
+- [x] **BATCH-03**: Automatic chunking for large batches (>1000 devices)
+- [x] **BATCH-04**: Error reporting per device in batch
 
 ## v2 Requirements
 
@@ -114,9 +114,9 @@ Explicitly excluded. Documented to prevent scope creep.
 | CORE-03 | Phase 2 | Pending |
 | CORE-04 | Phase 1 | Pending |
 | CORE-05 | Phase 1 | Pending |
-| CORE-06 | Phase 4 | Pending |
+| CORE-06 | Phase 4 | Complete |
 | CORE-07 | Phase 5 | Pending |
-| CORE-08 | Phase 4 | Pending |
+| CORE-08 | Phase 4 | Complete |
 | DEV-01 | Phase 1 | Pending |
 | DEV-02 | Phase 1 | Pending |
 | DEV-03 | Phase 1 | Pending |
@@ -125,33 +125,33 @@ Explicitly excluded. Documented to prevent scope creep.
 | DEV-06 | Phase 1 | Pending |
 | DEV-07 | Phase 1 | Pending |
 | DEV-08 | Phase 1 | Pending |
-| INTF-01 | Phase 3 | Pending |
-| INTF-02 | Phase 3 | Pending |
-| INTF-03 | Phase 3 | Pending |
-| INTF-04 | Phase 3 | Pending |
-| INTF-05 | Phase 3 | Pending |
-| INTF-06 | Phase 3 | Pending |
-| VLAN-01 | Phase 3 | Pending |
-| VLAN-02 | Phase 3 | Pending |
-| VLAN-03 | Phase 3 | Pending |
-| VLAN-04 | Phase 3 | Pending |
-| MOD-01 | Phase 3 | Pending |
-| MOD-02 | Phase 3 | Pending |
-| MOD-03 | Phase 3 | Pending |
-| MOD-04 | Phase 3 | Pending |
-| CABLE-01 | Phase 3 | Pending |
-| CABLE-02 | Phase 3 | Pending |
-| CABLE-03 | Phase 3 | Pending |
-| PREFIX-01 | Phase 3 | Pending |
-| PREFIX-02 | Phase 3 | Pending |
-| PREFIX-03 | Phase 3 | Pending |
-| IP-01 | Phase 3 | Pending |
-| IP-02 | Phase 3 | Pending |
-| IP-03 | Phase 3 | Pending |
-| BATCH-01 | Phase 4 | Pending |
-| BATCH-02 | Phase 4 | Pending |
-| BATCH-03 | Phase 4 | Pending |
-| BATCH-04 | Phase 4 | Pending |
+| INTF-01 | Phase 3 | Complete |
+| INTF-02 | Phase 3 | Complete |
+| INTF-03 | Phase 3 | Complete |
+| INTF-04 | Phase 3 | Complete |
+| INTF-05 | Phase 3 | Complete |
+| INTF-06 | Phase 3 | Complete |
+| VLAN-01 | Phase 3 | Complete |
+| VLAN-02 | Phase 3 | Complete |
+| VLAN-03 | Phase 3 | Complete |
+| VLAN-04 | Phase 3 | Complete |
+| MOD-01 | Phase 3 | Complete |
+| MOD-02 | Phase 3 | Complete |
+| MOD-03 | Phase 3 | Complete |
+| MOD-04 | Phase 3 | Complete |
+| CABLE-01 | Phase 3 | Complete |
+| CABLE-02 | Phase 3 | Complete |
+| CABLE-03 | Phase 3 | Complete |
+| PREFIX-01 | Phase 3 | Complete |
+| PREFIX-02 | Phase 3 | Complete |
+| PREFIX-03 | Phase 3 | Complete |
+| IP-01 | Phase 3 | Complete |
+| IP-02 | Phase 3 | Complete |
+| IP-03 | Phase 3 | Complete |
+| BATCH-01 | Phase 4 | Complete |
+| BATCH-02 | Phase 4 | Complete |
+| BATCH-03 | Phase 4 | Complete |
+| BATCH-04 | Phase 4 | Complete |
 
 **Coverage:**
 - v1 requirements: 49 total
