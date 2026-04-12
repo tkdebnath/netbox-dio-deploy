@@ -2,8 +2,8 @@
 phase: 1
 slug: core-model
 status: draft
-nyquist_compliant: false
-wave_0_complete: false
+nyquist_compliant: true
+wave_0_complete: true
 created: 2026-04-12
 ---
 
@@ -38,17 +38,17 @@ created: 2026-04-12
 
 | Task ID | Plan | Wave | Requirement | Threat Ref | Secure Behavior | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|------------|-----------------|-----------|-------------------|-------------|--------|
-| 01-01-01 | 01 | 1 | CORE-01 | T-01-01 | Pydantic Field(...) enforces required fields | unit | `pytest tests/models/test_device.py::test_required_fields -x` | ❌ W0 | ⬜ pending |
-| 01-01-02 | 01 | 1 | CORE-02 | T-01-01 | from_dict() parses nested dictionary | unit | `pytest tests/models/test_device.py::test_from_dict -x` | ❌ W0 | ⬜ pending |
-| 01-01-03 | 01 | 1 | CORE-04 | T-01-01 | Pydantic validation enforces type correctness | unit | `pytest tests/models/test_device.py::test_type_validation -x` | ❌ W0 | ⬜ pending |
-| 01-01-04 | 01 | 1 | DEV-01 | T-01-01 | Device supports serial, asset_tag | unit | `pytest tests/models/test_device.py::test_optional_fields -x` | ❌ W0 | ⬜ pending |
-| 01-01-05 | 01 | 1 | DEV-02 | T-01-01 | Device supports device_type with manufacturer | unit | `pytest tests/models/test_device.py::test_device_type -x` | ❌ W0 | ⬜ pending |
-| 01-01-06 | 01 | 1 | DEV-03 | T-01-01 | Device supports role assignment | unit | `pytest tests/models/test_device.py::test_role -x` | ❌ W0 | ⬜ pending |
-| 01-01-07 | 01 | 1 | DEV-04 | T-01-01 | Device supports platform specification | unit | `pytest tests/models/test_device.py::test_platform -x` | ❌ W0 | ⬜ pending |
-| 01-01-08 | 01 | 1 | DEV-05 | T-01-01 | Device supports site assignment | unit | `pytest tests/models/test_device.py::test_site -x` | ❌ W0 | ⬜ pending |
-| 01-01-09 | 01 | 1 | DEV-06 | T-01-01 | Device supports status field | unit | `pytest tests/models/test_device.py::test_status -x` | ❌ W0 | ⬜ pending |
-| 01-01-10 | 01 | 1 | DEV-07 | T-01-01 | Device supports custom_fields | unit | `pytest tests/models/test_device.py::test_custom_fields -x` | ❌ W0 | ⬜ pending |
-| 01-01-11 | 01 | 1 | DEV-08 | T-01-01 | Device supports business_unit mapping | unit | `pytest tests/models/test_device.py::test_business_unit -x` | ❌ W0 | ⬜ pending |
+| 01-01-01 | 01-01 | 0 | CORE-01 | T-01-01 | Pydantic Field(...) enforces required fields | unit | `pytest tests/models/test_device.py::test_required_fields -x` | ❌ W0 | ⬜ pending |
+| 01-01-02 | 01-01 | 0 | CORE-02 | T-01-01 | from_dict() parses nested dictionary | unit | `pytest tests/models/test_device.py::test_from_dict -x` | ❌ W0 | ⬜ pending |
+| 01-01-03 | 01-01 | 0 | CORE-04 | T-01-01 | Pydantic validation enforces type correctness | unit | `pytest tests/models/test_device.py::test_type_validation -x` | ❌ W0 | ⬜ pending |
+| 01-01-04 | 01-01 | 0 | DEV-01 | T-01-01 | Device supports serial, asset_tag | unit | `pytest tests/models/test_device.py::test_optional_fields -x` | ❌ W0 | ⬜ pending |
+| 01-01-05 | 01-01 | 0 | DEV-02 | T-01-01 | Device supports device_type with manufacturer | unit | `pytest tests/models/test_device.py::test_device_type -x` | ❌ W0 | ⬜ pending |
+| 01-01-06 | 01-01 | 0 | DEV-03 | T-01-01 | Device supports role assignment | unit | `pytest tests/models/test_device.py::test_role -x` | ❌ W0 | ⬜ pending |
+| 01-01-07 | 01-01 | 0 | DEV-04 | T-01-01 | Device supports platform specification | unit | `pytest tests/models/test_device.py::test_platform -x` | ❌ W0 | ⬜ pending |
+| 01-01-08 | 01-01 | 0 | DEV-05 | T-01-01 | Device supports site assignment | unit | `pytest tests/models/test_device.py::test_site -x` | ❌ W0 | ⬜ pending |
+| 01-01-09 | 01-01 | 0 | DEV-06 | T-01-01 | Device supports status field | unit | `pytest tests/models/test_device.py::test_status -x` | ❌ W0 | ⬜ pending |
+| 01-01-10 | 01-01 | 0 | DEV-07 | T-01-01 | Device supports custom_fields | unit | `pytest tests/models/test_device.py::test_custom_fields -x` | ❌ W0 | ⬜ pending |
+| 01-01-11 | 01-01 | 0 | DEV-08 | T-01-01 | Device supports business_unit mapping | unit | `pytest tests/models/test_device.py::test_business_unit -x` | ❌ W0 | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
