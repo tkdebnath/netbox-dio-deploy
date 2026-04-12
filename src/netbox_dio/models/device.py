@@ -79,10 +79,11 @@ class DiodeDevice(BaseModel):
         Returns:
             Device protobuf object ready for Diode gRPC transmission
         """
-        # Map business_unit to custom_fields if present
-        custom_fields = self.custom_fields or {}
-        if self.business_unit:
-            custom_fields["Business Unit"] = self.business_unit
+        # The Diode SDK's Device protobuf expects custom_fields as a dict[str, CustomFieldValue].
+        # Since we cannot easily convert dict[str, Any] to CustomFieldValue objects without
+        # knowing the field type, we set custom_fields to None by default to avoid SDK errors.
+        # Users should use the converter module for more sophisticated custom field handling.
+        custom_fields = None
 
         return Device(
             name=self.name,
