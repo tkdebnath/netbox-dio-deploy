@@ -43,7 +43,6 @@ theme:
 # Plugins
 plugins:
   - search
-  - macros
 
 # Custom styles
 extra_css:
@@ -65,11 +64,7 @@ markdown_extensions:
   - pymdownx.magiclink
   - pymdownx.mark
   - pymdownx.smartsymbols
-  - pymdownx.superfences:
-      custom_fences:
-        - name: mermaid
-          class: mermaid
-          format: !!python/name:mkdocs_material.extensions.magic.fence_magic_format
+  - pymdownx.superfences
   - pymdownx.tasklist:
       custom_checkbox: true
   - pymdownx.tilde
@@ -84,4 +79,4 @@ extra:
 
 # Documentation build configuration
 docs_dir: .
-site_dir: site
+site_dir: ../site
