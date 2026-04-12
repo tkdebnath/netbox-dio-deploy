@@ -7,7 +7,7 @@
 ## Phases
 
 - [x] **Phase 1: Core Model** - Pydantic DiodeDevice with mandatory field validation and device attributes
-- [ ] **Phase 2: Converter Layer** - Transform Pydantic models to Diode Entity protobuf messages
+- [x] **Phase 2: Converter Layer** - Transform Pydantic models to Diode Entity protobuf messages
 - [ ] **Phase 3: Device Subcomponents** - Interfaces, VLANs, Modules, Cables, Prefixes, IP addresses
 - [ ] **Phase 4: I/O Layer** - DiodeClient wrapper for gRPC transmission with batch support
 - [ ] **Phase 5: Validation & Error Handling** - Comprehensive exception handling and edge case coverage
@@ -38,8 +38,11 @@ Plans:
   1. User can convert a DiodeDevice to a Diode Entity protobuf message
   2. Converter produces valid protobuf messages compatible with Diode SDK
   3. Nested Pydantic objects (interfaces, VLANs) convert to separate Diode Entity objects (not nested)
-**Plans**: TBD
+**Plans**: 1 plan
 **UI hint**: no
+
+Plans:
+- [x] 02-01-PLAN.md — Converter module with device-to-Entity conversion and test suite
 
 ### Phase 3: Device Subcomponents
 **Goal**: Implement full support for device subcomponents as first-class Pydantic models
@@ -52,8 +55,11 @@ Plans:
   4. User can define cable relationships between device termination points
   5. User can manage IP prefixes with IPv4/IPv6 support
   6. User can assign primary and secondary IP addresses to devices
-**Plans**: TBD
+**Plans**: 1 plan
 **UI hint**: no
+
+Plans:
+- [ ] 03-01-PLAN.md — Create Pydantic models for interfaces, VLANs, modules, cables, prefixes, and IP addresses with converter functions
 
 ### Phase 4: I/O Layer
 **Goal**: Implement DiodeClient wrapper for gRPC transmission with environment-based configuration and batch operations
@@ -84,8 +90,8 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Core Model | 2/2 | Planned | - |
-| 2. Converter Layer | 0/1 | Not started | - |
-| 3. Device Subcomponents | 0/5 | Not started | - |
+| 1. Core Model | 2/2 | Completed | 2026-04-12 |
+| 2. Converter Layer | 1/1 | Completed | 2026-04-12 |
+| 3. Device Subcomponents | 0/1 | Not started | - |
 | 4. I/O Layer | 0/3 | Not started | - |
 | 5. Validation & Error Handling | 0/2 | Not started | - |
