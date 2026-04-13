@@ -6,6 +6,7 @@ human-readable, JSON, and YAML quality reports.
 
 from __future__ import annotations
 
+import yaml
 from datetime import datetime
 
 from .metrics import (
@@ -150,8 +151,6 @@ class QualityReporter:
         Returns:
             YAML-formatted report string
         """
-        import yaml
-
         data = self.generate_json_report(metrics)
         return yaml.dump(data, default_flow_style=False, sort_keys=False)
 

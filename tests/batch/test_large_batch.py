@@ -120,9 +120,7 @@ class TestBatchProcessorProcessing:
         )
 
         summary = result.get_error_summary()
-        assert "DiodeValidationError" in summary
-        assert "DiodeConversionError" in summary
-        assert "DiodeClientError" in summary
+        assert "DeviceError" in summary
 
     def test_process_batch_failed_devices(self):
         """Test getting failed device names."""

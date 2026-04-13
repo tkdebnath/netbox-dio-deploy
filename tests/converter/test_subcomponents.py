@@ -17,7 +17,7 @@ from netbox_dio.models import (
     DiodeModule,
     DiodeModuleBay,
     DiodeCable,
-    CableTerminationPoint,
+    TerminationPoint,
     DiodePrefix,
     DiodeIPAddress,
 )
@@ -150,7 +150,7 @@ class TestConvertModuleBay:
 
     def test_convert_module_bay_basic(self) -> None:
         """Test basic module bay conversion."""
-        bay = DiodeModuleBay(device="router-01", module="module-1", position=1)
+        bay = DiodeModuleBay(device="router-01", module="module-1", slot=1)
         entity = convert_module_bay(bay)
 
         assert entity is not None
@@ -161,7 +161,7 @@ class TestConvertModuleBay:
         bay = DiodeModuleBay(
             device="router-01",
             module="module-1",
-            position=1,
+            slot=1,
             name="supervisor-bay",
             label="Slot 1",
             description="Primary supervisor module",
@@ -174,7 +174,7 @@ class TestConvertModuleBay:
 
     def test_convert_module_bay_to_protobuf(self) -> None:
         """Test converting module bay to protobuf is valid."""
-        bay = DiodeModuleBay(device="router-01", module="module-1", position=1)
+        bay = DiodeModuleBay(device="router-01", module="module-1", slot=1)
         entity = convert_module_bay(bay)
 
         assert hasattr(entity, 'SerializeToString')
@@ -187,9 +187,16 @@ class TestConvertCable:
 
     def test_convert_cable_basic(self) -> None:
         """Test basic cable conversion."""
-        a_term = CableTerminationPoint(termination_type="device", termination_id="router-01", cable_end="A")
-        b_term = CableTerminationPoint(termination_type="device", termination_id="switch-01", cable_end="B")
-        cable = DiodeCable(a_terminations=[a_term], b_terminations=[b_term], type="cat6")
+        a_term = TerminationPoint(type="device", id="router-01", cable_end="A")
+        b_term = TerminationPoint(type="device", id="switch-01", cable_end="B")
+        cable = DiodeCable(
+            label="test-cable",
+            device_a="router-01",
+            device_b="switch-01",
+            a_terminations=[a_term],
+            b_terminations=[b_term],
+            type="cat6"
+        )
         entity = convert_cable(cable)
 
         assert entity is not None
@@ -197,14 +204,16 @@ class TestConvertCable:
 
     def test_convert_cable_with_optional_fields(self) -> None:
         """Test cable conversion with optional fields."""
-        a_term = CableTerminationPoint(termination_type="interface", termination_id="eth0", cable_end="A")
-        b_term = CableTerminationPoint(termination_type="interface", termination_id="eth1", cable_end="B")
+        a_term = TerminationPoint(type="interface", id="eth0", cable_end="A")
+        b_term = TerminationPoint(type="interface", id="eth1", cable_end="B")
         cable = DiodeCable(
+            label="uplink-cable",
+            device_a="eth0-device",
+            device_b="eth1-device",
             a_terminations=[a_term],
             b_terminations=[b_term],
             type="cat6",
             status="active",
-            label="uplink-cable",
             color="blue",
         )
         entity = convert_cable(cable)
@@ -215,9 +224,16 @@ class TestConvertCable:
 
     def test_convert_cable_to_protobuf(self) -> None:
         """Test converting cable to protobuf is valid."""
-        a_term = CableTerminationPoint(termination_type="device", termination_id="router-01", cable_end="A")
-        b_term = CableTerminationPoint(termination_type="device", termination_id="switch-01", cable_end="B")
-        cable = DiodeCable(a_terminations=[a_term], b_terminations=[b_term], type="cat6")
+        a_term = TerminationPoint(type="device", id="router-01", cable_end="A")
+        b_term = TerminationPoint(type="device", id="switch-01", cable_end="B")
+        cable = DiodeCable(
+            label="test-cable",
+            device_a="router-01",
+            device_b="switch-01",
+            a_terminations=[a_term],
+            b_terminations=[b_term],
+            type="cat6"
+        )
         entity = convert_cable(cable)
 
         assert hasattr(entity, 'SerializeToString')

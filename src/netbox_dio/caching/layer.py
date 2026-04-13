@@ -13,22 +13,7 @@ import time
 from dataclasses import dataclass
 from typing import Any, Optional
 
-from .backends import CacheBackend, CacheMetrics, RedisCacheBackend, InMemoryCacheBackend
-
-
-def generate_cache_key(prefix: str, *params: str) -> str:
-    """Generate a consistent cache key from parameters.
-
-    Args:
-        prefix: The key prefix
-        *params: Parameters to include in the key
-
-    Returns:
-        A hash-based cache key string
-    """
-    key_params = ":".join(params)
-    hash_value = hashlib.md5(key_params.encode()).hexdigest()
-    return f"{prefix}{hash_value}"
+from .backends import CacheBackend, CacheMetrics, RedisCacheBackend, InMemoryCacheBackend, generate_cache_key
 
 
 class CacheLayer:

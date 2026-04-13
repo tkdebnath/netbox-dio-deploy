@@ -43,15 +43,14 @@ def process_batch(
 
     # Process in batches
     processor = BatchProcessor(chunk_size=chunk_size)
+    chunks = list(create_message_chunks(devices, chunk_size))
 
-    for i, chunk in enumerate(create_message_chunks(devices, chunk_size)):
-        chunk_num = i + 1
-        typer.echo(f"Processing chunk {chunk_num}/{num_chunks} ({len(chunk)} devices)")
+    for i, (chunk_num, chunk_entities) in enumerate(chunks):
+        typer.echo(f"Processing chunk {chunk_num}/{num_chunks} ({len(chunk_entities)} entities)")
 
         try:
-            # Process chunk - in actual implementation would call DiodeClient
-            result = processor.process(chunk)
-            typer.echo(f"  Success: {result.success_count}, Errors: {result.error_count}")
+            # In actual implementation, would call DiodeClient.send_batch(chunk_entities)
+            typer.echo(f"  Chunk ready for transmission")
         except Exception as e:
             typer.echo(f"  Error processing chunk: {e}", err=True)
             # Continue with next chunk

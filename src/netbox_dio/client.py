@@ -29,6 +29,24 @@ from .exceptions import (
 )
 
 
+def _to_string(value):
+    """Convert protobuf enum or object to string.
+
+    Args:
+        value: The protobuf value to convert
+
+    Returns:
+        String representation of the value, or None if value is None
+    """
+    if value is None:
+        return None
+    if hasattr(value, "name"):
+        return value.name
+    if hasattr(value, "value"):
+        return str(value.value)
+    return str(value)
+
+
 @dataclass
 class ConnectionConfig:
     """Configuration for Diode gRPC connection.
@@ -364,17 +382,6 @@ class DiodeClient:
         return os.path.join(self._config.dry_run_output_dir, filename)
 
     def _write_dry_run_output(self, path: str, entities: list[Entity]) -> None:
-
-        def _to_string(value):
-            """Convert protobuf enum or object to string."""
-            if value is None:
-                return None
-            if hasattr(value, "name"):
-                return value.name
-            if hasattr(value, "value"):
-                return str(value.value)
-            return str(value)
-
         output = []
         for entity in entities:
             entity_dict = {}

@@ -10,6 +10,18 @@ from __future__ import annotations
 from typing import Optional
 
 
+def _clean_context(context: dict) -> dict:
+    """Remove None values from context dictionary.
+
+    Args:
+        context: Dictionary with context values
+
+    Returns:
+        Dictionary with None values removed
+    """
+    return {k: v for k, v in context.items() if v is not None}
+
+
 class DiodeError(Exception):
     """Base exception for all Diode-related errors.
 
@@ -90,9 +102,7 @@ class DiodeValidationError(DiodeError):
             "value": value,
             "device_name": device_name,
         }
-        # Remove None values from context
-        context = {k: v for k, v in context.items() if v is not None}
-        super().__init__(message, context)
+        super().__init__(message, _clean_context(context))
 
 
 class DiodeConversionError(DiodeError):
@@ -129,9 +139,7 @@ class DiodeConversionError(DiodeError):
             "original_dict": original_dict,
             "conversion_type": conversion_type,
         }
-        # Remove None values from context
-        context = {k: v for k, v in context.items() if v is not None}
-        super().__init__(message, context)
+        super().__init__(message, _clean_context(context))
 
 
 class DiodeClientError(DiodeError):
@@ -165,9 +173,7 @@ class DiodeClientError(DiodeError):
             "endpoint": endpoint,
             "original_error": str(original_error) if original_error else None,
         }
-        # Remove None values from context
-        context = {k: v for k, v in context.items() if v is not None}
-        super().__init__(message, context)
+        super().__init__(message, _clean_context(context))
 
 
 class DiodeServerResponseError(DiodeError):
@@ -203,9 +209,7 @@ class DiodeServerResponseError(DiodeError):
             "device_name": device_name,
             "status_code": status_code,
         }
-        # Remove None values from context
-        context = {k: v for k, v in context.items() if v is not None}
-        super().__init__(message, context)
+        super().__init__(message, _clean_context(context))
 
 
 class DiodeBatchError(DiodeError):
@@ -244,9 +248,7 @@ class DiodeBatchError(DiodeError):
             "failed": failed,
             "summary": summary,
         }
-        # Remove None values from context
-        context = {k: v for k, v in context.items() if v is not None}
-        super().__init__(message, context)
+        super().__init__(message, _clean_context(context))
 
 
 # Additional I/O specific exception types

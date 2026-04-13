@@ -101,17 +101,6 @@ class BatchResult:
                 summary[error_type] = 0
             summary[error_type] += 1
 
-        # Also check for specific exception types in error messages
-        for error in self.errors:
-            if "ValidationError" in error.error_message:
-                summary["DiodeValidationError"] = summary.get("DiodeValidationError", 0) + 1
-            elif "ConversionError" in error.error_message:
-                summary["DiodeConversionError"] = summary.get("DiodeConversionError", 0) + 1
-            elif "ClientError" in error.error_message:
-                summary["DiodeClientError"] = summary.get("DiodeClientError", 0) + 1
-            elif "ServerResponseError" in error.error_message:
-                summary["DiodeServerResponseError"] = summary.get("DiodeServerResponseError", 0) + 1
-
         return summary
 
     def get_failed_devices(self) -> List[str]:
@@ -349,16 +338,17 @@ class BatchError(DiodeBatchError):
         )
 
 
-def create_message_chunks(devices: list) -> list[tuple[int, list[Entity]]]:
+def create_message_chunks(devices: list, chunk_size: int = 1000) -> list[tuple[int, list[Entity]]]:
     """Convert devices to entity chunks for batch transmission.
 
     This convenience function combines chunking and conversion:
-    1. Splits devices into chunks of 1000
+    1. Splits devices into chunks of chunk_size (default 1000)
     2. Converts each chunk to Entity objects
     3. Returns list of (chunk_number, entities) tuples
 
     Args:
         devices: List of DiodeDevice instances to chunk and convert
+        chunk_size: Maximum number of devices per chunk (default: 1000)
 
     Returns:
         List of (chunk_number, list_of_entities) tuples
@@ -374,8 +364,8 @@ def create_message_chunks(devices: list) -> list[tuple[int, list[Entity]]]:
         >>> print(f"Number of chunks: {len(chunks)}")
         >>> print(f"First chunk size: {len(chunks[0][1])}")
     """
-    # Use a temporary processor with the standard 1000 chunk size
-    processor = BatchProcessor(max_chunk_size=1000)
+    # Use a temporary processor with the specified chunk size
+    processor = BatchProcessor(max_chunk_size=chunk_size)
     return processor.get_chunked_payloads(devices)
 
 

@@ -74,7 +74,8 @@ def test_nested_interfaces(device_data):
     """Verify interfaces nested list works."""
     from netbox_dio import DiodeDevice, DiodeInterface
 
-    data = device_data.model_dump()
+    device = DiodeDevice.from_dict(device_data)
+    data = device.model_dump()
     data["interfaces"] = [
         {"name": "eth0", "device": data["name"], "type": "physical"},
         {"name": "eth1", "device": data["name"], "type": "physical"},
@@ -90,7 +91,8 @@ def test_nested_vlans(device_data):
     """Verify vlans nested list works."""
     from netbox_dio import DiodeDevice, DiodeVLAN
 
-    data = device_data.model_dump()
+    device = DiodeDevice.from_dict(device_data)
+    data = device.model_dump()
     data["vlans"] = [
         {"name": "voice", "vid": 100, "site": data["site"]},
         {"name": "data", "vid": 200, "site": data["site"]},
@@ -106,7 +108,8 @@ def test_nested_modules(device_data):
     """Verify modules nested list works."""
     from netbox_dio import DiodeDevice, DiodeModule
 
-    data = device_data.model_dump()
+    device = DiodeDevice.from_dict(device_data)
+    data = device.model_dump()
     data["modules"] = [
         {"module_type": "sfp+", "device": data["name"]},
     ]
@@ -121,9 +124,10 @@ def test_nested_module_bays(device_data):
     """Verify module_bays nested list works."""
     from netbox_dio import DiodeDevice, DiodeModuleBay
 
-    data = device_data.model_dump()
+    device = DiodeDevice.from_dict(device_data)
+    data = device.model_dump()
     data["module_bays"] = [
-        {"name": "slot1", "device": data["name"], "position": 1},
+        {"name": "slot1", "device": data["name"], "slot": 1, "module": "sfp+"},
     ]
 
     device = DiodeDevice.from_dict(data)

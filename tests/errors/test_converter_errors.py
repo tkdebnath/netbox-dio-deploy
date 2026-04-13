@@ -155,7 +155,7 @@ class TestConvertModuleBay:
         module_bay = DiodeModuleBay(
             device="router-01",
             module="module-1",
-            position=1,
+            slot=1,
         )
 
         with patch("netbox_dio.converter.ModuleBay") as mock_bay:
@@ -174,13 +174,16 @@ class TestConvertCable:
     def test_convert_cable_with_invalid_data(self):
         """Test cable conversion with error wrapping."""
         cable = DiodeCable(
+            label="test-cable",
+            device_a="router-01",
+            device_b="switch-01",
             a_terminations=[],
             b_terminations=[],
             type="cat6",
         )
 
-        with patch("netbox_dio.converter.Cable") as mock_cable:
-            mock_cable.side_effect = Exception("SDK error")
+        with patch("netbox_dio.models.cable.DiodeCable.to_protobuf") as mock_protobuf:
+            mock_protobuf.side_effect = Exception("SDK error")
 
             with pytest.raises(DiodeConversionError) as exc_info:
                 convert_cable(cable, device_name="router-01")

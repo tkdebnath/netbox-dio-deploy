@@ -64,8 +64,6 @@ def create_app():
         Reads device data from a file or stdin and validates/imports it into
         NetBox Diode. Supports JSON and YAML formats with auto-detection.
         """
-        import typer
-        from typer.testing import CliRunner
 
         # Determine input source
         if file:
@@ -134,7 +132,7 @@ def create_app():
                 device_objects = [DiodeDevice.from_dict(d) for d in devices]
                 # Batch processing
                 chunks = create_message_chunks(device_objects)
-                typer.echo(f"Split into {len(chunks)} chunks of {chunk_size} devices each")
+                typer.echo(f"Split into {len(chunks)} chunks")
                 for i, chunk in enumerate(chunks):
                     typer.echo(f"Processing chunk {i + 1}/{len(chunks)}")
                     # In actual implementation, would call DiodeClient

@@ -53,23 +53,23 @@ class TestModuleBayCreation:
 
     def test_module_bay_creation(self) -> None:
         """Test basic module bay creation with required fields."""
-        bay = DiodeModuleBay(device="router-01", module="module-1", position=1)
+        bay = DiodeModuleBay(device="router-01", module="module-1", slot=1)
         assert bay.device == "router-01"
         assert bay.module == "module-1"
-        assert bay.position == 1
+        assert bay.slot == 1
 
     def test_module_bay_with_optional_fields(self) -> None:
         """Test module bay creation with optional fields."""
         bay = DiodeModuleBay(
             device="router-01",
             module="module-1",
-            position=1,
+            slot=1,
             name="supervisor-bay",
             label="Slot 1",
             description="Primary supervisor module",
         )
         assert bay.device == "router-01"
-        assert bay.position == 1
+        assert bay.slot == 1
         assert bay.name == "supervisor-bay"
         assert bay.label == "Slot 1"
 
@@ -78,17 +78,17 @@ class TestModuleBayCreation:
         data = {
             "device": "switch-01",
             "module": "module-2",
-            "position": 2,
+            "slot": 2,
             "name": "line-card-bay",
         }
         bay = DiodeModuleBay.from_dict(data)
         assert bay.device == "switch-01"
-        assert bay.position == 2
+        assert bay.slot == 2
         assert bay.name == "line-card-bay"
 
     def test_module_bay_to_protobuf(self) -> None:
         """Test converting module bay to protobuf."""
-        bay = DiodeModuleBay(device="router-01", module="module-1", position=1)
+        bay = DiodeModuleBay(device="router-01", module="module-1", slot=1)
         protobuf = bay.to_protobuf()
         assert protobuf is not None
         assert protobuf.position == "1"

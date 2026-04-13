@@ -111,14 +111,11 @@ def convert_interface(interface: DiodeInterface, device_name: Optional[str] = No
         # Convert string VLAN references to VLAN protobuf objects where needed
         untagged_vlan_obj = None
         if interface.untagged_vlan:
-            # Create a minimal VLAN object from the string reference
-            # For now, assume a default site and VID; users should provide full VLAN objects
-            # TODO: Allow passing a VLAN resolver function for proper lookups
-            untagged_vlan_obj = VLAN(name=str(interface.untagged_vlan), vid=1, site="default")
+            untagged_vlan_obj = VLAN(name=interface.untagged_vlan, vid=1, site=interface.device)
 
         qinq_svlan_obj = None
         if interface.qinq_svlan:
-            qinq_svlan_obj = VLAN(name=str(interface.qinq_svlan), vid=2, site="default")
+            qinq_svlan_obj = VLAN(name=interface.qinq_svlan, vid=2, site=interface.device)
 
         proto_interface = Interface(
             name=interface.name,
@@ -309,7 +306,7 @@ def convert_cable(cable: DiodeCable, device_name: Optional[str] = None) -> Entit
     except Exception as e:
         raise _wrap_conversion_error(
             "convert_cable",
-            device_name or f"{cable.device_a_name}-{cable.device_b_name}",
+            device_name or f"{cable.device_a}-{cable.device_b}",
             e,
             None,
             "cable",

@@ -78,7 +78,6 @@ class DiodeCable(BaseModel):
     # Optional fields matching SDK Cable
     status: Optional[str] = Field(default=None, description="Cable status (active, planned, decommissioned, available)")
     tenant: Optional[str] = Field(default=None, description="Tenant")
-    label: Optional[str] = Field(default=None, description="Cable label")
     color: Optional[str] = Field(default=None, description="Color")
     length: Optional[float] = Field(default=None, description="Length")
     length_unit: Optional[str] = Field(default=None, description="Length unit")

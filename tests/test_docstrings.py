@@ -290,7 +290,7 @@ class TestDocstringCoverage:
             "DiodeDevice", "DiodeInterface", "DiodeVLAN", "DiodeModule",
             "DiodeCable", "DiodePrefix", "DiodeIPAddress", "DiodeRack",
             "DiodePDU", "DiodeCircuit", "DiodePowerFeed", "DiodePowerOutlet",
-            "DiodeModuleBay", "CableTerminationPoint", "ConnectionConfig",
+            "DiodeModuleBay", "TerminationPoint", "ConnectionConfig",
             "DeviceError", "BatchProcessor", "BatchResult",
             # Exception classes
             "DiodeError", "DiodeValidationError", "DiodeConversionError",
@@ -300,7 +300,7 @@ class TestDocstringCoverage:
             "InterfaceType", "InterfaceMode", "InterfaceDuplex",
             "VLANStatus", "VLANRole", "VLANGroup",
             "ModuleStatus", "ModuleBayPosition",
-            "CableType", "CableStatus", "CableTerminationPointType",
+            "CableType", "CableStatus",
             "PrefixStatus", "PrefixRole", "IPAddressStatus", "IPAddressRole",
             "DiodeClient",
             # Dataclass models (auto-generated __init__)
