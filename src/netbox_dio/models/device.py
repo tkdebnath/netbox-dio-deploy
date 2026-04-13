@@ -1,8 +1,14 @@
 """DiodeDevice Pydantic model with mandatory field validation."""
 
 from pydantic import BaseModel, Field, field_validator, ValidationError
-from typing import Any, Optional
+from typing import Any, Optional, List
 from netboxlabs.diode.sdk.ingester import Device
+
+from .interface import DiodeInterface
+from .vlan import DiodeVLAN
+from .module import DiodeModule
+from .prefix import DiodePrefix
+from .ip_address import DiodeIPAddress
 
 from ..exceptions import DiodeValidationError
 
@@ -31,6 +37,7 @@ class DiodeDevice(BaseModel):
     status: Optional[str] = Field(default=None, description="Device status (active, offline, planned)")
     custom_fields: Optional[dict[str, Any]] = Field(default=None, description="Custom field values")
     business_unit: Optional[str] = Field(default=None, description="Business unit for mapping to custom_fields")
+    interfaces: Optional[list["DiodeInterface"]] = Field(default=None, description="List of interfaces on the device")
 
     class Config:
         """Pydantic configuration."""

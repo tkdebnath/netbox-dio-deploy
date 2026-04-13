@@ -86,12 +86,12 @@ class DiodeCable(BaseModel):
     """
 
     # Required fields - must be provided
-    a_terminations: List[CableTerminationPoint] = Field(
-        ..., description="List of A-end termination points"
-    )
-    b_terminations: List[CableTerminationPoint] = Field(
-        ..., description="List of B-end termination points"
-    )
+    termination_a_type: str = Field(..., description="Type of the first termination point")
+    termination_a_id: str = Field(..., description="ID of the first termination point")
+    termination_b_type: str = Field(..., description="Type of the second termination point")
+    termination_b_id: str = Field(..., description="ID of the second termination point")
+    device_a_name: Optional[str] = Field(default=None, description="Name of the device for termination A, required if termination_type is 'interface'")
+    device_b_name: Optional[str] = Field(default=None, description="Name of the device for termination B, required if termination_type is 'interface'")
     type: str = Field(..., description="The cable type (cat5e, cat6, cat6a, cat7, fiber, coaxial, power, other)")
 
     # Optional fields

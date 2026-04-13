@@ -326,23 +326,39 @@ def convert_cable(cable: DiodeCable, device_name: Optional[str] = None) -> Entit
 
             return go
 
-        # Convert termination points to GenericObjects
-        a_term_pb = []
-        for term in cable.a_terminations:
-            dev_name = term.termination_id if term.termination_type == "device" else device_name or cable.a_terminations[0].termination_id
-            go = create_generic_object(term, dev_name)
-            a_term_pb.append(go)
+        return go
 
-        b_term_pb = []
-        for term in cable.b_terminations:
-            dev_name = term.termination_id if term.termination_type == "device" else device_name or cable.b_terminations[0].termination_id
-            go = create_generic_object(term, dev_name)
-            b_term_pb.append(go)
+        # Use device_a_name if provided and termination is interface, otherwise fallback to termination_a_id
+        device_name_a_for_interface = cable.device_a_name if cable.termination_a_type == "interface" else None
+        # If device_name_for_term_a is still None, use termination_a_id if it's a device or fallback to original device_name
+        final_device_name_a = device_name_a_for_interface or (cable.termination_a_id if cable.termination_a_type == "device" else device_name or "unknown")
 
-        proto_cable = Cable(
+        term_a_point = CableTerminationPoint(
+            termination_type=cable.termination_a_type,
+            termination_id=cable.termination_a_id,
+            cable_end='A'
+        )
+        go_a = create_generic_object(term_a_point, final_device_name_a)
+
+
+        # Use device_b_name if provided and termination is interface, otherwise fallback to termination_b_id
+        device_name_b_for_interface = cable.device_b_name if cable.termination_b_type == "interface" else None
+        # If device_name_for_term_b is still None, use termination_b_id if it's a device or fallback to original device_name
+        final_device_name_b = device_name_b_for_interface or (cable.termination_b_id if cable.termination_b_type == "device" else device_name or "unknown")
+
+        term_b_point = CableTerminationPoint(
+            termination_type=cable.termination_b_type,
+            termination_id=cable.termination_b_id,
+            cable_end='B'
+        )
+        go_b = create_generic_object(term_b_point, final_device_name_b)
+
+
+        # Build the Cable protobuf message
+        cable_pb = Cable(
             type=cable.type,
-            a_terminations=a_term_pb,
-            b_terminations=b_term_pb,
+            a_terminations=[go_a],
+            b_terminations=[go_b],
             status=cable.status,
             tenant=cable.tenant,
             label=cable.label,
@@ -358,7 +374,7 @@ def convert_cable(cable: DiodeCable, device_name: Optional[str] = None) -> Entit
             profile=cable.profile,
         )
 
-        return Entity(cable=proto_cable)
+        return Entity(cable=cable_pb)
     except Exception as e:
         raise _wrap_conversion_error(
             "convert_cable",
