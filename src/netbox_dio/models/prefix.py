@@ -42,6 +42,7 @@ class DiodePrefix(BaseModel):
     prefix: str = Field(..., description="The IP prefix in CIDR notation (e.g., 192.168.1.0/24)")
 
     # Optional fields
+    site: Optional[str] = Field(default=None, description="Site name - shortcuts to scope_site")
     vrf: Optional[str] = Field(default=None, description="VRF name")
     status: Optional[str] = Field(default=None, description="Prefix status (active, reserved, deprecated, available)")
     role: Optional[str] = Field(default=None, description="Prefix role (network, loopback, relay, vrf, other)")
@@ -56,13 +57,26 @@ class DiodePrefix(BaseModel):
     tenant: Optional[str] = Field(default=None, description="Tenant name")
     scope_location: Optional[str] = Field(default=None, description="Scope location name")
     scope_region: Optional[str] = Field(default=None, description="Scope region name")
-    scope_site: Optional[str] = Field(default=None, description="Scope site name")
+    scope_site: Optional[str] = Field(default=None, description="Scope site name (set from site if not specified)")
     scope_site_group: Optional[str] = Field(default=None, description="Scope site group name")
     vlan: Optional[str] = Field(default=None, description="VLAN name")
 
     class Config:
         """Pydantic configuration."""
         validate_assignment = True
+
+    @field_validator("scope_site")
+    @classmethod
+    def validate_scope_site(cls, v: Optional[str]) -> Optional[str]:
+        """Validate scope_site is not provided directly (use 'site' instead).
+
+        Args:
+            v: The scope_site value
+
+        Returns:
+            The validated scope_site value
+        """
+        return v
 
     @classmethod
     def from_dict(cls, data: dict) -> "DiodePrefix":
@@ -152,9 +166,15 @@ class DiodePrefix(BaseModel):
     def to_protobuf(self) -> Prefix:
         """Convert DiodePrefix to netboxlabs.diode.sdk.ingester.Prefix.
 
+        Site inheritance: if site is set but scope_site is not,
+        scope_site will be set to the site value.
+
         Returns:
             Prefix protobuf object ready for Diode gRPC transmission
         """
+        # Inherit scope_site from site if not explicitly set
+        scope_site = self.scope_site if self.scope_site is not None else self.site
+
         # Convert string references to VRF objects where needed
         vrf_obj = None
         if self.vrf:
@@ -177,7 +197,7 @@ class DiodePrefix(BaseModel):
             tenant=self.tenant,
             scope_location=self.scope_location,
             scope_region=self.scope_region,
-            scope_site=self.scope_site,
+            scope_site=scope_site,
             scope_site_group=self.scope_site_group,
             vlan=self.vlan,
         )

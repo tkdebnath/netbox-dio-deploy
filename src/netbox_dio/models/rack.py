@@ -1,7 +1,7 @@
 """DiodeRack Pydantic model with validation for rack infrastructure."""
 
 from pydantic import BaseModel, Field, field_validator
-from typing import Optional
+from typing import Any, Optional
 from netboxlabs.diode.sdk.ingester import Rack
 
 
@@ -9,51 +9,86 @@ class DiodeRack(BaseModel):
     """Pydantic model for Diode Rack with mandatory field validation.
 
     This model enforces required fields (name, site, rack_type) on initialization
-    and supports all rack-level attributes defined in the requirements.
+    and supports all rack-level attributes defined in the NetBox Diode SDK.
 
     Required fields use `Field(...)` to ensure they must be provided.
     Optional fields use `Field(default=None)` to allow omission.
 
-    Validation rules:
-    - u_height: positive integer (1-100)
-    - starting_unit: 1 or 48
-    - name: 1-64 characters
-    - serial/asset_tag: 0-64 characters
+    SDK Field Mapping (all fields from netboxlabs.diode.sdk.ingester.Rack):
+    - name: str (REQUIRED) - The rack name
+    - facility_id: str (optional) - Rack facility ID
+    - site: str | Site (REQUIRED) - Site this rack belongs to
+    - location: str | Location (optional) - Location within site
+    - tenant: str | Tenant (optional) - Tenant owning the rack
+    - status: str (optional) - Rack status
+    - role: str | RackRole (optional) - Rack role reference
+    - serial: str (optional) - Rack serial number
+    - asset_tag: str (optional) - Rack asset tag
+    - rack_type: str | RackType (REQUIRED) - Rack type model name
+    - form_factor: str (optional) - Rack form factor
+    - width: int (optional) - Rack width in mm
+    - u_height: int (optional) - Height in U positions
+    - starting_unit: int (optional) - Starting unit number (1 or 48)
+    - weight: float (optional) - Weight of installed equipment
+    - max_weight: int (optional) - Maximum rack weight capacity
+    - weight_unit: str (optional) - Weight unit
+    - desc_units: bool (optional) - Whether units count downward
+    - outer_width: int (optional) - Outer frame width
+    - outer_depth: int (optional) - Outer frame depth
+    - outer_unit: str (optional) - Outer dimensions unit
+    - mounting_depth: int (optional) - Mounting depth in mm
+    - airflow: str (optional) - Airflow direction
+    - description: str (optional) - Rack description
+    - comments: str (optional) - Rack comments
+    - tags: list[str] (optional) - Rack tags
+    - custom_fields: dict (optional) - Custom field values
+    - outer_height: int (optional) - Outer frame height
+    - metadata: dict (optional) - Additional metadata
+    - owner: str (optional) - Owner reference
+
+    The following fields are wrapper-only additions for device position tracking:
+    - device_positions: list[dict] (optional) - List of device entries with position info
     """
 
     # Required fields - must be provided
     name: str = Field(..., description="The rack name")
-    site: str = Field(..., description="The site name")
-    rack_type: str = Field(..., description="The rack type (e.g., 42u, 45u)")
+    site: str = Field(..., description="The site name (parent site/container)")
+    rack_type: str = Field(..., description="The rack type model name")
 
-    # Optional fields
+    # Optional fields - SDK attributes
+    facility_id: Optional[str] = Field(default=None, description="Rack facility ID")
+    location: Optional[str] = Field(default=None, description="Location within site")
+    tenant: Optional[str] = Field(default=None, description="Tenant reference")
+    status: Optional[str] = Field(default=None, description="Rack status")
+    role: Optional[str] = Field(default=None, description="Rack role")
     serial: Optional[str] = Field(default=None, description="Rack serial number")
     asset_tag: Optional[str] = Field(default=None, description="Rack asset tag")
-    role: Optional[str] = Field(default=None, description="Rack role")
-    u_height: Optional[int] = Field(default=None, description="Number of RU available")
-    starting_unit: Optional[int] = Field(default=None, description="Starting RU number")
-    description: Optional[str] = Field(default=None, description="Rack description")
-    status: Optional[str] = Field(default=None, description="Rack status")
-    location: Optional[str] = Field(default=None, description="Location within site")
-    airflow: Optional[str] = Field(default=None, description="Airflow direction")
     form_factor: Optional[str] = Field(default=None, description="Rack form factor")
-    weight: Optional[float] = Field(default=None, description="Rack weight")
+    width: Optional[int] = Field(default=None, description="Rack width in mm")
+    u_height: Optional[int] = Field(default=None, description="Height available in U positions")
+    starting_unit: Optional[int] = Field(default=None, description="Starting unit number")
+    weight: Optional[float] = Field(default=None, description="Weight of equipment")
+    max_weight: Optional[int] = Field(default=None, description="Maximum weight capacity")
     weight_unit: Optional[str] = Field(default=None, description="Weight unit")
+    desc_units: Optional[bool] = Field(default=None, description="Units count downward")
+    outer_width: Optional[int] = Field(default=None, description="Outer frame width")
+    outer_depth: Optional[int] = Field(default=None, description="Outer frame depth")
+    outer_unit: Optional[str] = Field(default=None, description="Outer dimension unit")
     mounting_depth: Optional[int] = Field(default=None, description="Mounting depth in mm")
-    outer_height: Optional[int] = Field(default=None, description="Outer height")
-    outer_depth: Optional[int] = Field(default=None, description="Outer depth")
-    outer_width: Optional[int] = Field(default=None, description="Outer width")
-    outer_unit: Optional[str] = Field(default=None, description="Dimension unit")
-    max_weight: Optional[float] = Field(default=None, description="Maximum weight capacity")
-    desc_units: Optional[bool] = Field(default=None, description="Whether units are top-to-bottom")
+    airflow: Optional[str] = Field(default=None, description="Airflow direction")
+    description: Optional[str] = Field(default=None, description="Rack description")
     comments: Optional[str] = Field(default=None, description="Rack comments")
-    custom_fields: Optional[dict] = Field(default=None, description="Custom field values")
-    metadata: Optional[dict] = Field(default=None, description="Metadata")
-    owner: Optional[str] = Field(default=None, description="Owner")
     tags: Optional[list[str]] = Field(default=None, description="Rack tags")
-    tenant: Optional[str] = Field(default=None, description="Tenant reference")
-    facility_id: Optional[str] = Field(default=None, description="Facility ID")
-    width: Optional[int] = Field(default=None, description="Rack width")
+    custom_fields: Optional[dict[str, Any]] = Field(default=None, description="Custom field values")
+    outer_height: Optional[int] = Field(default=None, description="Outer frame height")
+    metadata: Optional[dict[str, Any]] = Field(default=None, description="Metadata")
+    owner: Optional[str] = Field(default=None, description="Owner reference")
+
+    # Wrapper-only fields (not in SDK) - used for device position tracking
+    device_positions: Optional[list[dict[str, Any]]] = Field(
+        default=None,
+        description="List of device positions within this rack for tracking (wrapper-only, not sent to SDK)",
+    )
 
     class Config:
         """Pydantic configuration."""
@@ -62,8 +97,6 @@ class DiodeRack(BaseModel):
     @classmethod
     def from_dict(cls, data: dict) -> "DiodeRack":
         """Parse a dictionary into a DiodeRack instance.
-
-        Uses Pydantic's model_validate() for proper type coercion and validation.
 
         Args:
             data: Dictionary containing rack data
@@ -197,41 +230,89 @@ class DiodeRack(BaseModel):
     def to_protobuf(self) -> Rack:
         """Convert DiodeRack to netboxlabs.diode.sdk.ingester.Rack.
 
+        All fields are passed directly to SDK Rack constructor for type coercion.
+        Wrapper-only fields (device_positions) are not transmitted.
+
         Returns:
             Rack protobuf object ready for Diode gRPC transmission
         """
         return Rack(
             name=self.name,
+            facility_id=self.facility_id,
             site=self.site,
-            rack_type=self.rack_type,
+            location=self.location,
+            tenant=self.tenant,
+            status=self.status,
+            role=self.role,
             serial=self.serial,
             asset_tag=self.asset_tag,
-            role=self.role,
+            rack_type=self.rack_type,
+            form_factor=self.form_factor,
+            width=self.width,
             u_height=self.u_height,
             starting_unit=self.starting_unit,
-            description=self.description,
-            status=self.status,
-            location=self.location,
-            airflow=self.airflow,
-            form_factor=self.form_factor,
             weight=self.weight,
-            weight_unit=self.weight_unit,
-            mounting_depth=self.mounting_depth,
-            outer_height=self.outer_height,
-            outer_depth=self.outer_depth,
-            outer_width=self.outer_width,
-            outer_unit=self.outer_unit,
             max_weight=self.max_weight,
+            weight_unit=self.weight_unit,
             desc_units=self.desc_units,
+            outer_width=self.outer_width,
+            outer_depth=self.outer_depth,
+            outer_unit=self.outer_unit,
+            mounting_depth=self.mounting_depth,
+            airflow=self.airflow,
+            description=self.description,
             comments=self.comments,
+            tags=self.tags,
             custom_fields=self.custom_fields,
+            outer_height=self.outer_height,
             metadata=self.metadata,
             owner=self.owner,
-            tags=self.tags,
-            tenant=self.tenant,
-            facility_id=self.facility_id,
-            width=self.width,
         )
+
+    def get_device_positions(self) -> list[dict[str, Any]]:
+        """Get device positions with rack/site/location inheritance.
+
+        For each device position entry:
+        - If 'site' or 'location' is not specified, inherit from rack
+
+        Returns:
+            List of device position entries with all fields resolved
+
+        Example:
+            >>> rack = DiodeRack(
+            ...     name="rack-01",
+            ...     site="dc-east",
+            ...     location="building-a",
+            ...     rack_type="42u",
+            ...     device_positions=[
+            ...         {"device": "router-01", "position": 10.0},
+            ...         {"device": "switch-01", "position": 20.0, "location": "build-b"},
+            ...     ],
+            ... )
+            >>> rack.get_device_positions()
+            [
+                {"device": "router-01", "position": 10.0, "site": "dc-east", "location": "building-a"},
+                {"device": "switch-01", "position": 20.0, "site": "dc-east", "location": "build-b"},
+            ]
+        """
+        if not self.device_positions:
+            return []
+
+        resolved = []
+        for pos in self.device_positions:
+            resolved_position = dict(pos)
+
+            # Apply site inheritance
+            if "site" not in resolved_position:
+                resolved_position["site"] = self.site
+
+            # Apply location inheritance
+            if "location" not in resolved_position:
+                resolved_position["location"] = self.location
+
+            resolved.append(resolved_position)
+
+        return resolved
 
 
 __all__ = ["DiodeRack"]

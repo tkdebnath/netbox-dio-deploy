@@ -173,16 +173,7 @@ class DiodeInterface(BaseModel):
         Returns:
             Interface protobuf object ready for Diode gRPC transmission
         """
-        # Convert string references to VLAN objects where needed
-        untagged_vlan_obj = None
-        if self.untagged_vlan:
-            untagged_vlan_obj = VLAN(name=self.untagged_vlan, vid=100, site="site-a")
-
-        qinq_svlan_obj = None
-        if self.qinq_svlan:
-            qinq_svlan_obj = VLAN(name=self.qinq_svlan, vid=200, site="site-a")
-
-        # Build the Interface protobuf message
+        # Build the Interface protobuf message directly without hardcoded VLAN objects
         interface = Interface(
             name=self.name,
             device=self.device,
@@ -207,8 +198,8 @@ class DiodeInterface(BaseModel):
             rf_channel_frequency=self.rf_channel_frequency,
             rf_channel_width=self.rf_channel_width,
             tx_power=self.tx_power,
-            untagged_vlan=untagged_vlan_obj,
-            qinq_svlan=qinq_svlan_obj,
+            untagged_vlan=self.untagged_vlan,
+            qinq_svlan=self.qinq_svlan,
             vlan_translation_policy=self.vlan_translation_policy,
             mark_connected=self.mark_connected,
             vrf=self.vrf,

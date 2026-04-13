@@ -24,8 +24,9 @@ class ModuleBayPosition(int):
 class DiodeModule(BaseModel):
     """Pydantic model for Diode Module.
 
-    This model enforces required fields (module_type, device) and
-    supports all module-level attributes defined in the requirements.
+    This model enforces required field (module_type).
+    The 'device' field is optional when nested inside a DiodeDevice (auto-inherited),
+    but required when used standalone.
 
     Required fields use `Field(...)` to ensure they must be provided.
     Optional fields use `Field(default=None)` to allow omission.
@@ -35,9 +36,15 @@ class DiodeModule(BaseModel):
 
     # Required fields - must be provided
     module_type: str = Field(..., description="The module type model name")
-    device: str = Field(..., description="The device name")
+
+    # Optional fields (device is auto-inherited when nested inside DiodeDevice)
+    device: Optional[str] = Field(
+        default=None,
+        description="The device name (optional when nested in device.modules, required when standalone)"
+    )
 
     # Optional fields
+    slot: Optional[int] = Field(default=None, description="Slot number where module is installed")
     serial: Optional[str] = Field(default=None, description="Module serial number")
     asset_tag: Optional[str] = Field(default=None, description="Module asset tag")
     status: Optional[str] = Field(default=None, description="Module status (active, installed, deprecated, retired)")
@@ -117,17 +124,21 @@ class DiodeModule(BaseModel):
 class DiodeModuleBay(BaseModel):
     """Pydantic model for Diode ModuleBay.
 
-    This model enforces required fields (device, module, position) and
-    supports all module bay-level attributes defined in the requirements.
+    The 'device' field is optional for auto-inheritance from parent device.
+    Required when standalone. The 'slot' field identifies the bay position.
+    The 'module' field specifies which module type is installed.
 
     Required fields use `Field(...)` to ensure they must be provided.
     Optional fields use `Field(default=None)` to allow omission.
     """
 
-    # Required fields - must be provided
-    device: str = Field(..., description="The device name")
-    module: str = Field(..., description="The module name")
-    position: int = Field(..., description="The module bay position")
+    # Optional fields (device auto-inherited when nested in DiodeDevice.module_bays)
+    device: Optional[str] = Field(
+        default=None,
+        description="The device name (auto-inherited when nested in device.module_bays)"
+    )
+    slot: int = Field(..., description="Slot number identifier for this module bay")
+    module: str = Field(..., description="Module type installed in this slot")
 
     # Optional fields
     name: Optional[str] = Field(default=None, description="Module bay name")
@@ -165,11 +176,17 @@ class DiodeModuleBay(BaseModel):
         Returns:
             ModuleBay protobuf object ready for Diode gRPC transmission
         """
+        # Validate required fields
+        if self.device is None:
+            raise ValueError("device is required for ModuleBay")
+        if self.module is None:
+            raise ValueError("module is required for ModuleBay")
+
         # Build the ModuleBay protobuf message
         module_bay = ModuleBay(
             device=self.device,
             installed_module=Module(module_type=self.module, device=self.device),
-            position=str(self.position),
+            position=str(self.slot),
             name=self.name,
             label=self.label,
             description=self.description,

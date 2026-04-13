@@ -79,28 +79,19 @@ def convert_device(device: DiodeDevice) -> Entity:
 def convert_device_to_entities(device: DiodeDevice) -> list[Entity]:
     """Convert a DiodeDevice to a list of Diode Entity protobuf messages.
 
-    This function converts the main device entity. Nested objects (interfaces,
-    VLANs, modules, cables, prefixes, IP addresses) are handled separately.
+    This function converts the main device entity plus all nested subcomponents
+    (interfaces, VLANs, modules, module bays, cables, prefixes, IP addresses).
 
     Args:
         device: The DiodeDevice instance to convert
 
     Returns:
-        List of Entity protobuf messages (device plus nested objects)
+        List of Entity protobuf messages (device plus all nested objects)
 
     Raises:
         DiodeConversionError: If conversion fails
     """
-    try:
-        entity = convert_device(device)
-        return [entity]
-    except Exception as e:
-        raise _wrap_conversion_error(
-            "convert_device_to_entities",
-            device.name,
-            e,
-            None,
-        )
+    return convert_device_with_subcomponents(device)
 
 
 def convert_interface(interface: DiodeInterface, device_name: Optional[str] = None) -> Entity:
@@ -117,6 +108,18 @@ def convert_interface(interface: DiodeInterface, device_name: Optional[str] = No
         DiodeConversionError: If conversion fails
     """
     try:
+        # Convert string VLAN references to VLAN protobuf objects where needed
+        untagged_vlan_obj = None
+        if interface.untagged_vlan:
+            # Create a minimal VLAN object from the string reference
+            # For now, assume a default site and VID; users should provide full VLAN objects
+            # TODO: Allow passing a VLAN resolver function for proper lookups
+            untagged_vlan_obj = VLAN(name=str(interface.untagged_vlan), vid=1, site="default")
+
+        qinq_svlan_obj = None
+        if interface.qinq_svlan:
+            qinq_svlan_obj = VLAN(name=str(interface.qinq_svlan), vid=2, site="default")
+
         proto_interface = Interface(
             name=interface.name,
             device=interface.device,
@@ -141,8 +144,8 @@ def convert_interface(interface: DiodeInterface, device_name: Optional[str] = No
             rf_channel_frequency=interface.rf_channel_frequency,
             rf_channel_width=interface.rf_channel_width,
             tx_power=interface.tx_power,
-            untagged_vlan=interface.untagged_vlan,
-            qinq_svlan=interface.qinq_svlan,
+            untagged_vlan=untagged_vlan_obj,
+            qinq_svlan=qinq_svlan_obj,
             vlan_translation_policy=interface.vlan_translation_policy,
             mark_connected=interface.mark_connected,
             vrf=interface.vrf,
@@ -264,7 +267,7 @@ def convert_module_bay(module_bay: DiodeModuleBay, device_name: Optional[str] = 
         proto_bay = ModuleBay(
             device=module_bay.device,
             installed_module=Module(module_type=module_bay.module, device=module_bay.device),
-            position=str(module_bay.position),
+            position=str(module_bay.slot),
             name=module_bay.name,
             label=module_bay.label,
             description=module_bay.description,
@@ -299,86 +302,14 @@ def convert_cable(cable: DiodeCable, device_name: Optional[str] = None) -> Entit
         DiodeConversionError: If conversion fails
     """
     try:
-        from netboxlabs.diode.sdk.ingester import Interface, ModuleBay
-
-        # Helper function to create a GenericObject with the appropriate object field
-        def create_generic_object(term, dev_name: str) -> GenericObject:
-            """Create a GenericObject with the appropriate object field set."""
-            go = GenericObject()
-
-            if term.termination_type == "interface":
-                # Interface requires: name, device, type
-                device = Device(name=dev_name)
-                iface = Interface(name=term.termination_id, device=device, type="physical")
-                go.object_interface.CopyFrom(iface)
-            elif term.termination_type == "device":
-                # Device requires: name, device_type, role, site
-                dev = Device(name=term.termination_id, device_type="cisco-9300", role="core-router", site="site-a")
-                go.object_device.CopyFrom(dev)
-            elif term.termination_type == "module_bay":
-                # ModuleBay requires: device, module, position
-                mb = ModuleBay(device=dev_name, module=term.termination_id, position=1)
-                go.object_module_bay.CopyFrom(mb)
-            elif term.termination_type == "cable":
-                # Cable requires: type, a_terminations, b_terminations
-                cable_obj = Cable(type=term.termination_id)
-                go.object_cable.CopyFrom(cable_obj)
-
-            return go
-
-        return go
-
-        # Use device_a_name if provided and termination is interface, otherwise fallback to termination_a_id
-        device_name_a_for_interface = cable.device_a_name if cable.termination_a_type == "interface" else None
-        # If device_name_for_term_a is still None, use termination_a_id if it's a device or fallback to original device_name
-        final_device_name_a = device_name_a_for_interface or (cable.termination_a_id if cable.termination_a_type == "device" else device_name or "unknown")
-
-        term_a_point = CableTerminationPoint(
-            termination_type=cable.termination_a_type,
-            termination_id=cable.termination_a_id,
-            cable_end='A'
-        )
-        go_a = create_generic_object(term_a_point, final_device_name_a)
-
-
-        # Use device_b_name if provided and termination is interface, otherwise fallback to termination_b_id
-        device_name_b_for_interface = cable.device_b_name if cable.termination_b_type == "interface" else None
-        # If device_name_for_term_b is still None, use termination_b_id if it's a device or fallback to original device_name
-        final_device_name_b = device_name_b_for_interface or (cable.termination_b_id if cable.termination_b_type == "device" else device_name or "unknown")
-
-        term_b_point = CableTerminationPoint(
-            termination_type=cable.termination_b_type,
-            termination_id=cable.termination_b_id,
-            cable_end='B'
-        )
-        go_b = create_generic_object(term_b_point, final_device_name_b)
-
-
-        # Build the Cable protobuf message
-        cable_pb = Cable(
-            type=cable.type,
-            a_terminations=[go_a],
-            b_terminations=[go_b],
-            status=cable.status,
-            tenant=cable.tenant,
-            label=cable.label,
-            color=cable.color,
-            length=cable.length,
-            length_unit=cable.length_unit,
-            description=cable.description,
-            comments=cable.comments,
-            tags=cable.tags,
-            custom_fields=cable.custom_fields,
-            metadata=cable.metadata,
-            owner=cable.owner,
-            profile=cable.profile,
-        )
+        # Use cable.to_protobuf() for simpler conversion
+        cable_pb = cable.to_protobuf()
 
         return Entity(cable=cable_pb)
     except Exception as e:
         raise _wrap_conversion_error(
             "convert_cable",
-            device_name,
+            device_name or f"{cable.device_a_name}-{cable.device_b_name}",
             e,
             None,
             "cable",
@@ -822,5 +753,4 @@ __all__ = [
     "convert_pdu",
     "convert_circuit",
     "convert_power_feed",
-    "convert_device_with_power",
 ]

@@ -4,7 +4,7 @@ from .device import DiodeDevice
 from .interface import DiodeInterface, InterfaceType, InterfaceMode, InterfaceDuplex
 from .vlan import DiodeVLAN, VLANStatus, VLANRole, VLANGroup
 from .module import DiodeModule, ModuleStatus, DiodeModuleBay, ModuleBayPosition
-from .cable import DiodeCable, CableType, CableStatus, CableTerminationPoint, CableTerminationPointType
+from .cable import DiodeCable, CableType, CableStatus, TerminationPoint
 from .prefix import DiodePrefix, PrefixStatus, PrefixRole
 from .ip_address import DiodeIPAddress, IPAddressStatus, IPAddressRole
 from .rack import DiodeRack
@@ -29,8 +29,7 @@ __all__ = [
     "DiodeCable",
     "CableType",
     "CableStatus",
-    "CableTerminationPoint",
-    "CableTerminationPointType",
+    "TerminationPoint",
     "DiodePrefix",
     "PrefixStatus",
     "PrefixRole",

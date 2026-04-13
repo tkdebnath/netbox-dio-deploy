@@ -5,18 +5,26 @@ network infrastructure data in NetBox Diode. It parses nested dictionary
 structures into typed objects and generates Diode payloads for gRPC transmission.
 
 Usage:
-    from netbox_dio import DiodeDevice, convert_device
+    from netbox_dio import DiodeDevice, convert_device_to_entities
 
-    # Create a device from a dictionary
+    # Create a device with nested subcomponents from a dictionary
     device = DiodeDevice.from_dict({
         "name": "router-01",
         "site": "site-a",
         "device_type": "cisco-9300",
-        "role": "core-router"
+        "role": "core-router",
+        "interfaces": [
+            {"name": "eth0", "device": "router-01", "type": "physical"},
+            {"name": "eth1", "device": "router-01", "type": "physical"},
+        ],
+        "vlans": [
+            {"name": "voice", "vid": 100, "site": "site-a"},
+            {"name": "data", "vid": 200, "site": "site-a"},
+        ],
     })
 
-    # Convert to protobuf for Diode transmission
-    entity = convert_device(device)
+    # Convert to protobuf entities (device + all nested subcomponents)
+    entities = convert_device_to_entities(device)
 """
 
 from .exceptions import (
@@ -47,8 +55,7 @@ from .models import (
     DiodeCable,
     CableType,
     CableStatus,
-    CableTerminationPoint,
-    CableTerminationPointType,
+    TerminationPoint,
     DiodePrefix,
     PrefixStatus,
     PrefixRole,
@@ -119,8 +126,7 @@ __all__ = [
     "DiodeCable",
     "CableType",
     "CableStatus",
-    "CableTerminationPoint",
-    "CableTerminationPointType",
+    "TerminationPoint",
     "DiodePrefix",
     "PrefixStatus",
     "PrefixRole",
