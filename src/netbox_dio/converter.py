@@ -705,35 +705,6 @@ def convert_power_feed(power_feed: DiodePowerFeed) -> Entity:
         )
 
 
-def convert_device_with_power(device: DiodeDevice) -> list[Entity]:
-    """Convert a DiodeDevice to a list of Diode Entity protobuf messages.
-
-    This function converts the main device entity plus any power components
-    (racks, PDUs, circuits, power feeds) that may be associated with the device.
-
-    Args:
-        device: The DiodeDevice instance to convert
-
-    Returns:
-        List of Entity protobuf messages (device plus power components)
-
-    Raises:
-        DiodeConversionError: If conversion fails
-    """
-    entities = []
-
-    try:
-        entities.append(convert_device(device))
-    except DiodeConversionError as e:
-        raise DiodeConversionError(
-            f"Failed to convert main device '{device.name}': {e.message}",
-            device_name=device.name,
-            original_dict=getattr(device, "__dict__", {}),
-            conversion_type="device",
-        )
-
-    return entities
-
 
 __all__ = [
     "convert_device",

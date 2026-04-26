@@ -41,6 +41,7 @@ testpaths = ["tests"]
 addopts = "-x --strict-markers"
 markers = [
     "unit: unit tests",
+    "io: io layer tests",
     "integration: integration tests",
 ]
 asyncio_mode = "auto"

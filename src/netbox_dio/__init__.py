@@ -67,6 +67,8 @@ from .models import (
     DiodePowerOutlet,
     DiodeCircuit,
     DiodePowerFeed,
+    ExportableMixin,
+    NetBoxYamlMixin,
 )
 from .converter import (
     convert_device,
@@ -97,6 +99,8 @@ from .importer import (
     validate_import,
     parse_import_errors,
 )
+from .quality import QualityMetrics, QualityReporter
+
 
 __all__ = [
     # Exception hierarchy
@@ -138,6 +142,9 @@ __all__ = [
     "DiodePowerOutlet",
     "DiodeCircuit",
     "DiodePowerFeed",
+    # Export mixins
+    "ExportableMixin",
+    "NetBoxYamlMixin",
     # Converter
     "convert_device",
     "convert_device_to_entities",
@@ -169,4 +176,7 @@ __all__ = [
     "from_netbox_api",
     "validate_import",
     "parse_import_errors",
+    "QualityMetrics",
+    "QualityReporter",
+
 ]

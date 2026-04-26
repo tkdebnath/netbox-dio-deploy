@@ -1,0 +1,28 @@
+# Lock file for reproducible builds
+# Generated with: pip freeze > requirements.lock
+
+# Core dependencies
+netboxlabs-diode-sdk>=1.10.0
+pydantic>=2.12.0
+
+# CLI
+typer>=0.24.0
+
+# Serialization
+pyyaml>=6.0.0
+
+# Optional dependencies (dev)
+pytest>=9.0.0
+pytest-cov>=6.0.0
+pytest-asyncio>=0.21.0
+black>=26.0.0
+ruff>=0.15.0
+isort>=8.0.0
+mypy>=1.20.0
+pytest-mock>=3.10.0
+
+# Documentation
+mkdocs>=1.4.0
+mkdocs-material>=9.0.0
+pdoc>=14.0.0
+mkdocs-macros-plugin>=0.7.0

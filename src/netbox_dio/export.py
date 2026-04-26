@@ -9,25 +9,18 @@ This module provides functions to export device data to multiple formats:
 from __future__ import annotations
 
 import json
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 import yaml
 
-from .models import (
-    DiodeDevice,
-    DiodeInterface,
-    DiodeVLAN,
-    DiodeModule,
-    DiodeCable,
-    DiodePrefix,
-    DiodeIPAddress,
-    DiodeRack,
-    DiodePDU,
-    DiodeCircuit,
-    DiodePowerFeed,
-)
 from .exceptions import DiodeValidationError
 
+if TYPE_CHECKING:
+    from .models import DiodeDevice
+
+# ---------------------------------------------------------------------------
+# Standalone export functions
+# ---------------------------------------------------------------------------
 
 def to_json(model: object, pretty: bool = False) -> str:
     """Export a Pydantic model to JSON string.
@@ -43,7 +36,6 @@ def to_json(model: object, pretty: bool = False) -> str:
         DiodeValidationError: If model cannot be serialized
     """
     try:
-        # Use model_dump() which handles all Pydantic types correctly
         data = model.model_dump() if hasattr(model, "model_dump") else dict(model)
         if pretty:
             return json.dumps(data, indent=2, default=str)
@@ -114,6 +106,10 @@ def to_netbox_yaml(device: DiodeDevice) -> dict:
     }
 
 
+# ---------------------------------------------------------------------------
+# Batch export
+# ---------------------------------------------------------------------------
+
 def export_devices(
     devices: list, format: str = "json", **kwargs
 ) -> str:
@@ -142,7 +138,8 @@ def export_devices(
         return yaml.dump(data, default_flow_style=False, allow_unicode=True, sort_keys=False)
 
     elif format == "netbox-yaml":
-        # For netbox-yaml, we expect DiodeDevice instances
+        # Import here to avoid circular imports at module load time
+        from .models import DiodeDevice
         if not all(isinstance(d, DiodeDevice) for d in devices):
             raise DiodeValidationError(
                 "NetBox YAML export requires DiodeDevice instances",
@@ -190,87 +187,6 @@ def export_devices(
             value=format,
         )
 
-
-# Add export methods to DiodeDevice
-def _device_to_json(self: DiodeDevice, pretty: bool = False) -> str:
-    """Export device to JSON string.
-
-    Args:
-        pretty: If True, format output with indentation
-
-    Returns:
-        JSON string representation of the device
-    """
-    return to_json(self, pretty=pretty)
-
-
-def _device_to_yaml(self: DiodeDevice) -> str:
-    """Export device to YAML string (NetBox-compatible).
-
-    Returns:
-        YAML string representation of the device
-    """
-    return to_yaml(self)
-
-
-def _device_to_netbox_yaml(self: DiodeDevice) -> dict:
-    """Export device to NetBox YAML format with device_type template.
-
-    Returns:
-        Dictionary in NetBox YAML format
-    """
-    return to_netbox_yaml(self)
-
-
-# Add export methods to other models
-def _rack_to_json(self: DiodeRack, pretty: bool = False) -> str:
-    return to_json(self, pretty=pretty)
-
-
-def _rack_to_yaml(self: DiodeRack) -> str:
-    return to_yaml(self)
-
-
-def _pdu_to_json(self: DiodePDU, pretty: bool = False) -> str:
-    return to_json(self, pretty=pretty)
-
-
-def _pdu_to_yaml(self: DiodePDU) -> str:
-    return to_yaml(self)
-
-
-def _circuit_to_json(self: DiodeCircuit, pretty: bool = False) -> str:
-    return to_json(self, pretty=pretty)
-
-
-def _circuit_to_yaml(self: DiodeCircuit) -> str:
-    return to_yaml(self)
-
-
-def _power_feed_to_json(self: DiodePowerFeed, pretty: bool = False) -> str:
-    return to_json(self, pretty=pretty)
-
-
-def _power_feed_to_yaml(self: DiodePowerFeed) -> str:
-    return to_yaml(self)
-
-
-# Apply monkey patches to add export methods to models
-DiodeDevice.to_json = _device_to_json
-DiodeDevice.to_yaml = _device_to_yaml
-DiodeDevice.to_netbox_yaml = _device_to_netbox_yaml
-
-DiodeRack.to_json = _rack_to_json
-DiodeRack.to_yaml = _rack_to_yaml
-
-DiodePDU.to_json = _pdu_to_json
-DiodePDU.to_yaml = _pdu_to_yaml
-
-DiodeCircuit.to_json = _circuit_to_json
-DiodeCircuit.to_yaml = _circuit_to_yaml
-
-DiodePowerFeed.to_json = _power_feed_to_json
-DiodePowerFeed.to_yaml = _power_feed_to_yaml
 
 __all__ = [
     "to_json",

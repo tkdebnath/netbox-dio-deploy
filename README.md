@@ -4,11 +4,13 @@ A high-level Python wrapper package for the NetBox Diode SDK that provides a "De
 
 ## Features
 
-- Parse nested dictionary structures into typed Pydantic models
-- Validate data with Pydantic v2
-- Convert to Diode Entity protobuf messages for gRPC transmission
-- Type-safe interfaces, VLANs, and other network objects
-- Rack and location inheritance for clustered devices
+- **Pydantic Models**: Typed device models with comprehensive validation
+- **Converter Layer**: Seamless Pydantic-to-Protobuf conversion for Diode
+- **CLI Tool**: Command-line interface for import/export operations
+- **Batch Processing**: Efficient handling of large device datasets
+- **Exception Hierarchy**: Comprehensive error reporting with typed exceptions
+- **Quality Metrics**: Data completeness and validity scoring
+- **Export Formats**: JSON, YAML, and NetBox YAML export
 
 ## Installation
 
@@ -16,7 +18,13 @@ A high-level Python wrapper package for the NetBox Diode SDK that provides a "De
 pip install netbox-dio
 ```
 
-## Usage
+**Optional dependencies:**
+```bash
+pip install netbox-dio[dev]  # Development dependencies
+pip install netbox-dio[docs]  # Documentation dependencies
+```
+
+## Quick Start
 
 ```python
 from netbox_dio import DiodeDevice, convert_device
@@ -31,8 +39,11 @@ device = DiodeDevice.from_dict({
 
 # Convert to protobuf for Diode transmission
 entity = convert_device(device)
+```
 
-# With rack location and cluster information
+### With Rack Location and Cluster Information
+
+```python
 device = DiodeDevice.from_dict({
     "name": "server-01",
     "site": "dc-east",
@@ -44,7 +55,6 @@ device = DiodeDevice.from_dict({
 })
 
 # With location and rack_positions for clustered devices
-# Location specifies where within the site (e.g., building, room)
 device = DiodeDevice.from_dict({
     "name": "core-switch-stack",
     "site": "global-dc",
@@ -65,6 +75,52 @@ device = DiodeDevice.from_dict({
 # Use helper to get resolved rack positions with inheritance
 resolved_positions = device.get_rack_positions_with_inheritance()
 # Returns list with all site/location fields filled in
+```
+
+## CLI Usage
+
+```bash
+# Import devices from JSON or YAML
+netbox-dio import --file devices.json --format json
+
+# Export devices to JSON, YAML, or NetBox YAML format
+netbox-dio export --format json --output exported.json
+
+# Dry-run mode for validation
+netbox-dio import --file devices.yaml --dry-run
+```
+
+## Architecture
+
+The package is organized into these main layers:
+
+- **Models**: Pydantic v2 models for all network device types
+- **Converter**: Converts Pydantic models to Diode protobuf messages
+- **Validator**: Validates device data against configurable rules
+- **Client**: gRPC client wrapper for Diode transmission
+- **Batch**: Automatic chunking for large device batches
+- **Export/Import**: Data import and export utilities
+
+## Documentation
+
+- [Getting Started](docs/getting-started/) - Installation and quickstart
+- [API Reference](docs/api/) - Complete API documentation
+- [CLI Reference](docs/cli/) - Command-line interface guide
+- [Architecture](docs/architecture/) - Package structure and design
+- [Migration Guide](docs/migration/) - Version migration instructions
+- [Error Handling](docs/error-handling.md) - Error hierarchy and handling
+
+## Testing
+
+```bash
+# Run all tests
+pytest
+
+# Run with coverage
+pytest --cov=netbox_dio
+
+# Run with detailed output
+pytest -v
 ```
 
 ## Development

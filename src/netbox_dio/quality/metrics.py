@@ -10,6 +10,8 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any, Optional
 
+
+
 from ..exceptions import DiodeValidationError
 from ..models import DiodeDevice
 from ..validators import ValidationResult, Severity, ValidatorPipeline
@@ -108,7 +110,6 @@ class QualityMetrics:
     @classmethod
     def from_dict(cls, data: dict) -> QualityMetrics:
         """Create a QualityMetrics from a dictionary."""
-        from datetime import datetime
 
         field_breakdown = {}
         for k, v in data.get("field_breakdown", {}).items():
